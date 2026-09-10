@@ -5,12 +5,11 @@ Note what it imports: the SAME `decide` the backtest calls. That is the entire
 point of the architecture. If you ever find yourself re-implementing strategy
 logic in this file, stop: put it in strategy.py so the replay tests it too.
 
-STATUS: execution is stubbed. Indodax does publish a documented, authenticated
-trading API (order placement and balance queries) — but the calls below have
-not been implemented against it yet. Until fetch_real_balance() and
-place_order() are filled in with real, signed Indodax API calls, run this
-with EXECUTE=false and it behaves as a signal notifier: it tells you what it
-would have done, without touching your account.
+STATUS: real exchange execution is stubbed. Indodax does publish a documented,
+authenticated trading API (order placement and balance queries) — but the
+calls below have not been implemented against it yet. The PAPER simulation
+itself always runs regardless (see the action loop below) -- EXECUTE only
+controls whether a REAL order is ALSO attempted on top of that.
 """
 
 import json
@@ -19,7 +18,7 @@ import sys
 from typing import Any, Dict, List
 
 from config import Config
-from engine import HaltSignal, check_drawdown, equity, verify_balance
+from engine import HaltSignal, apply_fill, check_drawdown, equity, verify_balance
 from strategy import Action, Lot, decide, new_state
 
 STATE_PATH = os.environ.get("STATE_PATH", "state.json")
@@ -55,8 +54,6 @@ def fetch_latest_candles(cfg: Config) -> List[Dict[str, Any]]:
     lookback, at the RIGHT interval for its family -- 15-minute for
     NATIVE_CRYPTO (Unyil 2.0, Guardian, Usro), 60-minute for WRAPPER
     (ORB, GAP), matching exactly what backtesting validated each on.
-    Using the wrong interval here would silently feed a strategy data
-    it was never tested against.
     """
     from indodax_data import fetch_paged
     import strategy as active_strategy_module
@@ -65,10 +62,6 @@ def fetch_latest_candles(cfg: Config) -> List[Dict[str, Any]]:
 
     if strategy_family == "WRAPPER":
         interval = "60"
-        bars_per_day = 24
-        # WRAPPER strategies need enough real history for the asset-type
-        # detector's own session-hour auto-detection (>= 1 week), not
-        # just cfg.history_window (which isn't meaningfully used by GAP).
         days_needed = 14
         candles = fetch_paged(f"{cfg.coin.upper()}{cfg.quote}", interval, days=days_needed)
         if cfg.orb_session_start_hour is None and candles:
@@ -95,15 +88,40 @@ def place_order(action: Action, cfg: Config) -> Dict[str, Any]:
     raise NotImplementedError("Indodax authenticated order call not implemented yet")
 
 
+def _format_check_report(coin_label: str, state: Dict[str, Any], candle: Dict[str, Any],
+                          cfg: Config, regime_note: str, action_line: str = None) -> str:
+    """
+    One consistent, readable block per check -- price, regime (native
+    only), current value vs. principal, and what happened -- instead of
+    a dense one-line technical string.
+    """
+    price = candle["close"]
+    principal = state.get("principal", cfg.starting_idr)
+    current_equity = equity(state, price)
+    pct = ((current_equity - principal) / principal * 100) if principal > 0 else 0.0
+    has_position = bool(state.get("lots"))
+
+    regime_line = ""
+    if regime_note:
+        label = regime_note.split("regime:")[-1].split("(")[0].strip()
+        regime_line = f"Regime: {label}\n"
+
+    lines = [
+        f"[{coin_label}] Check-in",
+        f"Price: Rp {price:,.0f}",
+        regime_line.rstrip(),
+        f"Equity: Rp {current_equity:,.0f} ({pct:+.2f}%)",
+        f"Position: {'open' if has_position else 'in cash'}",
+        f"Action: {action_line or 'none -- waiting for a real signal'}",
+    ]
+    return "\n".join(l for l in lines if l)
+
+
 def notify(message: str) -> None:
     """
     Always logs to stdout (picked up by the GitHub Actions log regardless).
     Sends to Telegram if TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID are both
-    set -- Telegram's Bot API needs its own specific shape (bot token in
-    the URL path, chat_id + text in the body), not a generic webhook POST,
-    so this is a real Telegram-specific call, not the old NOTIFY_WEBHOOK
-    guess. Also still supports NOTIFY_WEBHOOK for anything else (Slack,
-    a custom endpoint) if that's set instead or in addition.
+    set.
     """
     print(f"[NOTIFY] {message}", flush=True)
 
@@ -142,9 +160,6 @@ def notify(message: str) -> None:
 def main() -> int:
     cfg = Config()
 
-    # Per-job overrides via environment variables, so one script serves
-    # every matrix job (different coin, capital, and gap_mode per job)
-    # without hardcoding any of it in Config's own defaults.
     if os.environ.get("COIN"):
         cfg.coin = os.environ["COIN"].lower()
     if os.environ.get("STARTING_IDR"):
@@ -152,28 +167,23 @@ def main() -> int:
     if os.environ.get("GAP_MODE"):
         cfg.gap_mode = os.environ["GAP_MODE"]
 
+    coin_label = cfg.coin.upper()
+
     problems = cfg.validate()
     if problems:
-        notify("Config rejected: " + "; ".join(problems))
+        notify(f"[{coin_label}] Config rejected: " + "; ".join(problems))
         return 1
 
     state = load_state(cfg)
 
     candles = fetch_latest_candles(cfg)
     if not candles:
-        notify("No candles returned; skipping this cycle.")
+        notify(f"[{coin_label}] No candles returned; skipping this cycle.")
         return 0
 
     candle = candles[-1]
     state["closes"] = [c["close"] for c in candles[-cfg.history_window:]]
 
-    # --- informational regime context, native crypto only, decisions
-    # unaffected. Automated regime-switching was tested carefully (see
-    # spec Section 11d) and found to underperform running one strategy
-    # continuously -- so this is shown as CONTEXT alongside whatever the
-    # active strategy actually decides, never used to change strategies
-    # live. Wrapped in try/except: a regime-manager failure must never
-    # block the real trading decision below.
     regime_note = ""
     strategy_family = getattr(__import__("strategy"), "STRATEGY_FAMILY", None)
     if strategy_family == "NATIVE_CRYPTO":
@@ -188,69 +198,78 @@ def main() -> int:
             regime_note = f" | regime: unavailable ({e})"
     state["bars_seen"] = max(state["bars_seen"] + 1, len(state["closes"]))
 
-    # --- account-wide risk gate ---
     halt_msg = check_drawdown(state, candle["close"], cfg)
     if halt_msg:
-        notify(f"HALT: {halt_msg}. New trades stopped. "
+        notify(f"[{coin_label}] HALT: {halt_msg}. New trades stopped. "
                f"Existing positions untouched. Your call what happens next.")
         save_state(state)
         return 0
 
-    # --- balance reconciliation ---
     if EXECUTE:
         try:
             real = fetch_real_balance(cfg)
             drift = abs(real.get("idr", 0) - state["idr"])
             if drift > max(1000.0, state["idr"] * 0.01):
-                notify(f"PAUSED: balance mismatch. Local {state['idr']:,.0f} IDR "
+                notify(f"[{coin_label}] PAUSED: balance mismatch. Local {state['idr']:,.0f} IDR "
                        f"vs exchange {real.get('idr', 0):,.0f}. Waiting for you.")
                 state["halted"] = True
                 save_state(state)
                 return 0
         except NotImplementedError:
-            notify("PAUSED: authenticated Indodax API not yet wired up. "
+            notify(f"[{coin_label}] PAUSED: authenticated Indodax API not yet wired up. "
                    "Refusing to trade blind.")
             return 1
 
     err = verify_balance(state)
     if err:
-        notify(f"PAUSED: internal state inconsistent ({err}). Waiting for you.")
+        notify(f"[{coin_label}] PAUSED: internal state inconsistent ({err}). Waiting for you.")
         state["halted"] = True
         save_state(state)
         return 0
 
-    # --- the decision, from the one shared function ---
     reserve_before = state.get("profit_reserve", 0.0)
     actions = decide(state, candle, cfg)
 
     if state.get("profit_reserve", 0.0) > reserve_before:
         swept = state["profit_reserve"] - reserve_before
-        notify(f"PROFIT PROTECTED: {swept:,.0f} IDR moved to reserve "
+        notify(f"[{coin_label}] PROFIT PROTECTED: {swept:,.0f} IDR moved to reserve "
                f"(total reserve now {state['profit_reserve']:,.0f} IDR). "
                f"This money will not be risked in future trades. "
                f"Withdraw it to your bank whenever you'd like it fully off the exchange.")
 
     if not actions:
-        notify(f"NO ACTION at Rp {candle['close']:,.0f}.{regime_note} Waiting for a real signal.")
+        notify(_format_check_report(coin_label, state, candle, cfg, regime_note))
         if state.get("_pending_anchor") is not None:
             state["anchor"] = state["_pending_anchor"]
         save_state(state)
         return 0
 
+    fills = []
     for action in actions:
         line = (f"{action.side.upper()} {action.tag} "
                 f"{action.qty_idr or action.qty_coin} — {action.reason}{regime_note}")
+
+        apply_fill(state, action, candle, cfg, fills)
+        err = verify_balance(state)
+        if err:
+            notify(f"[{coin_label}] PAUSED: internal state inconsistent after a fill "
+                   f"({err}). Waiting for you.")
+            state["halted"] = True
+            save_state(state)
+            return 0
+
         if not EXECUTE:
-            notify(f"[DRY RUN] would {line}")
+            notify(_format_check_report(coin_label, state, candle, cfg, regime_note,
+                                          action_line=f"PAPER TRADE -- {line}"))
             continue
         try:
             place_order(action, cfg)
-            notify(f"filled: {line}")
+            notify(f"[{coin_label}] filled (real order): {line}")
         except NotImplementedError:
-            notify(f"[NO API] would {line}")
-            break
+            notify(f"[{coin_label}] [PAPER TRADE, NO REAL API YET] {line}")
         except Exception as e:
-            notify(f"PAUSED: order failed ({e}). Waiting for you.")
+            notify(f"[{coin_label}] PAUSED: real order failed ({e}), but the paper "
+                   f"simulation already recorded this fill. Waiting for you.")
             state["halted"] = True
             break
 

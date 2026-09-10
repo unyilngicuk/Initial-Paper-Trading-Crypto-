@@ -3,20 +3,24 @@ name: Paper trade - native crypto (Unyil 2.0)
 on:
   schedule:
     - cron: "*/15 * * * *"
-  workflow_dispatch: {}  # lets you trigger a run manually from the Actions tab
+  workflow_dispatch: {}
 
-# Sequential, not parallel: each job commits its own state file back to
-# this repo. Running the matrix in parallel would race two commits/pushes
-# against the same branch at once. One at a time avoids that entirely --
-# with only 2 assets and a 15-minute window, this costs nothing real.
 concurrency:
   group: paper-trade-native
   cancel-in-progress: false
+
+# Without this, the built-in GITHUB_TOKEN defaults to read-only, and the
+# "commit state back to the repo" step fails with a permissions error
+# (git exit code 128) the moment it tries to push. This grants exactly
+# the write access needed for that, nothing more.
+permissions:
+  contents: write
 
 jobs:
   trade:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false   # a problem with one asset shouldn't cancel the sibling's tick
       max-parallel: 1
       matrix:
         coin: [btc, eth]
@@ -34,8 +38,8 @@ jobs:
         env:
           COIN: ${{ matrix.coin }}
           STATE_PATH: state_${{ matrix.coin }}.json
-          STARTING_IDR: "250000"   # 25% of Rp 1,000,000 -- matches the validated portfolio split
-          EXECUTE: "false"   # paper trading only -- never touches a real order
+          STARTING_IDR: "250000"
+          EXECUTE: "false"
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python3 live_runner.py

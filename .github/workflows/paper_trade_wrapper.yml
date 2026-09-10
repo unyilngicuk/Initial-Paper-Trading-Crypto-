@@ -2,17 +2,21 @@ name: Paper trade - wrapper assets (Gap-Fade)
 
 on:
   schedule:
-    - cron: "0 * * * *"   # once per hour, on the hour -- matches Gap-Fade's 60-min bars
+    - cron: "0 * * * *"
   workflow_dispatch: {}
 
 concurrency:
   group: paper-trade-wrapper
   cancel-in-progress: false
 
+permissions:
+  contents: write
+
 jobs:
   trade:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       max-parallel: 1
       matrix:
         coin: [tslax, googlx]
@@ -30,8 +34,8 @@ jobs:
         env:
           COIN: ${{ matrix.coin }}
           STATE_PATH: state_${{ matrix.coin }}.json
-          STARTING_IDR: "250000"   # 25% of Rp 1,000,000 -- matches the validated portfolio split
-          GAP_MODE: fade   # pure Gap-Fade -- the standing validated recommendation
+          STARTING_IDR: "250000"
+          GAP_MODE: fade
           EXECUTE: "false"
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}

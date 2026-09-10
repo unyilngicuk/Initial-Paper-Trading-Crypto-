@@ -34,6 +34,7 @@ jobs:
         env:
           COIN: ${{ matrix.coin }}
           STATE_PATH: state_${{ matrix.coin }}.json
+          STARTING_IDR: "250000"   # 25% of Rp 1,000,000 -- matches the validated portfolio split
           EXECUTE: "false"   # paper trading only -- never touches a real order
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}

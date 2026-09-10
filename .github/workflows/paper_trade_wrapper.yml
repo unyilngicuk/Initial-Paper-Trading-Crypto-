@@ -30,6 +30,7 @@ jobs:
         env:
           COIN: ${{ matrix.coin }}
           STATE_PATH: state_${{ matrix.coin }}.json
+          STARTING_IDR: "250000"   # 25% of Rp 1,000,000 -- matches the validated portfolio split
           GAP_MODE: fade   # pure Gap-Fade -- the standing validated recommendation
           EXECUTE: "false"
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}

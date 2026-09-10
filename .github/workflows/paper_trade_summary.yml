@@ -1,0 +1,22 @@
+name: Paper trade - daily portfolio summary
+
+on:
+  schedule:
+    - cron: "0 0 * * *"   # once a day at 00:00 UTC -- adjust the cron below to change frequency
+  workflow_dispatch: {}
+
+jobs:
+  summarize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Send portfolio summary
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python3 paper_trading_summary.py

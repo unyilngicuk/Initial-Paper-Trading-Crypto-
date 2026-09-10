@@ -9,10 +9,6 @@ concurrency:
   group: paper-trade-native
   cancel-in-progress: false
 
-# Without this, the built-in GITHUB_TOKEN defaults to read-only, and the
-# "commit state back to the repo" step fails with a permissions error
-# (git exit code 128) the moment it tries to push. This grants exactly
-# the write access needed for that, nothing more.
 permissions:
   contents: write
 
@@ -20,7 +16,7 @@ jobs:
   trade:
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false   # a problem with one asset shouldn't cancel the sibling's tick
+      fail-fast: false
       max-parallel: 1
       matrix:
         coin: [btc, eth]
@@ -50,5 +46,9 @@ jobs:
           git config user.email "actions@github.com"
           git add "state_${{ matrix.coin }}.json"
           git diff --staged --quiet || git commit -m "state: ${{ matrix.coin }} tick [skip ci]"
-          git pull --rebase --autostash
-          git push
+
+          for attempt in 1 2 3 4 5; do
+            git pull --rebase --autostash && git push && break
+            echo "Push attempt $attempt failed (likely a race with another job) -- retrying..."
+            sleep $((RANDOM % 5 + 2))
+          done

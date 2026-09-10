@@ -47,5 +47,9 @@ jobs:
           git config user.email "actions@github.com"
           git add "state_${{ matrix.coin }}.json"
           git diff --staged --quiet || git commit -m "state: ${{ matrix.coin }} tick [skip ci]"
-          git pull --rebase --autostash
-          git push
+
+          for attempt in 1 2 3 4 5; do
+            git pull --rebase --autostash && git push && break
+            echo "Push attempt $attempt failed (likely a race with another job) -- retrying..."
+            sleep $((RANDOM % 5 + 2))
+          done

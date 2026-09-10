@@ -71,6 +71,8 @@ from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 
 from config import Config
+
+STRATEGY_FAMILY = "NATIVE_CRYPTO"
 from indicators import sma
 
 

@@ -149,7 +149,7 @@ def main() -> int:
                f"Withdraw it to your bank whenever you'd like it fully off the exchange.")
 
     if not actions:
-        print(f"No trigger at {candle['close']:,.0f}. Waiting.", flush=True)
+        notify(f"NO ACTION at Rp {candle['close']:,.0f}. Waiting for a real signal.")
         if state.get("_pending_anchor") is not None:
             state["anchor"] = state["_pending_anchor"]
         save_state(state)

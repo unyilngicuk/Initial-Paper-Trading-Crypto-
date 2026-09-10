@@ -1,0 +1,49 @@
+name: Paper trade - native crypto (Unyil 2.0)
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch: {}  # lets you trigger a run manually from the Actions tab
+
+# Sequential, not parallel: each job commits its own state file back to
+# this repo. Running the matrix in parallel would race two commits/pushes
+# against the same branch at once. One at a time avoids that entirely --
+# with only 2 assets and a 15-minute window, this costs nothing real.
+concurrency:
+  group: paper-trade-native
+  cancel-in-progress: false
+
+jobs:
+  trade:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 1
+      matrix:
+        coin: [btc, eth]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Activate Unyil 2.0 (NATIVE_CRYPTO family)
+        run: cp strategy_unyil2.py strategy.py
+
+      - name: Run one paper-trading tick
+        env:
+          COIN: ${{ matrix.coin }}
+          STATE_PATH: state_${{ matrix.coin }}.json
+          EXECUTE: "false"   # paper trading only -- never touches a real order
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python3 live_runner.py
+
+      - name: Commit updated state back to the repo
+        run: |
+          git config user.name "paper-trading-bot"
+          git config user.email "actions@github.com"
+          git add "state_${{ matrix.coin }}.json"
+          git diff --staged --quiet || git commit -m "state: ${{ matrix.coin }} tick [skip ci]"
+          git pull --rebase --autostash
+          git push

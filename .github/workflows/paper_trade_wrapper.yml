@@ -1,0 +1,46 @@
+name: Paper trade - wrapper assets (Gap-Fade)
+
+on:
+  schedule:
+    - cron: "0 * * * *"   # once per hour, on the hour -- matches Gap-Fade's 60-min bars
+  workflow_dispatch: {}
+
+concurrency:
+  group: paper-trade-wrapper
+  cancel-in-progress: false
+
+jobs:
+  trade:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 1
+      matrix:
+        coin: [tslax, googlx]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Activate Gap-Fade (WRAPPER family)
+        run: cp strategy_gap.py strategy.py
+
+      - name: Run one paper-trading tick
+        env:
+          COIN: ${{ matrix.coin }}
+          STATE_PATH: state_${{ matrix.coin }}.json
+          GAP_MODE: fade   # pure Gap-Fade -- the standing validated recommendation
+          EXECUTE: "false"
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python3 live_runner.py
+
+      - name: Commit updated state back to the repo
+        run: |
+          git config user.name "paper-trading-bot"
+          git config user.email "actions@github.com"
+          git add "state_${{ matrix.coin }}.json"
+          git diff --staged --quiet || git commit -m "state: ${{ matrix.coin }} tick [skip ci]"
+          git pull --rebase --autostash
+          git push

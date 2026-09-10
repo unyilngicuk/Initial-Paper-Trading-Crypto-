@@ -4903,14 +4903,14 @@
     1377031000.0,
     1378032000.0,
     1378500000.0,
-    1378031000.0
+    1379271000.0
   ],
   "lots": [],
   "next_lot_id": 1,
   "anchor": null,
   "peak_equity": 10000000.0,
   "halted": false,
-  "bars_seen": 4900,
+  "bars_seen": 4901,
   "risk_frac": 1.0,
   "trade_history": [],
   "consecutive_losses": 0,

@@ -2,7 +2,8 @@ name: Paper trade - daily portfolio summary
 
 on:
   schedule:
-    - cron: "0 0 * * *"   # once a day at 00:00 UTC -- adjust the cron below to change frequency
+    - cron: "0 0 * * *"    # 07:00 WIB (Jakarta, UTC+7)
+    - cron: "0 12 * * *"   # 19:00 WIB (Jakarta, UTC+7)
   workflow_dispatch: {}
 
 jobs:

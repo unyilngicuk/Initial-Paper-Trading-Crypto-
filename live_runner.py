@@ -5,16 +5,15 @@ Note what it imports: the SAME `decide` the backtest calls. That is the entire
 point of the architecture. If you ever find yourself re-implementing strategy
 logic in this file, stop: put it in strategy.py so the replay tests it too.
 
-STATUS: real exchange execution is stubbed. Indodax does publish a documented,
-authenticated trading API (order placement and balance queries) — but the
-calls below have not been implemented against it yet. The PAPER simulation
-itself always runs regardless (see the action loop below) -- EXECUTE only
-controls whether a REAL order is ALSO attempted on top of that.
+STATUS: real exchange execution is stubbed. The PAPER simulation itself
+always runs regardless (see the action loop below) -- EXECUTE only controls
+whether a REAL order is ALSO attempted on top of that.
 """
 
 import json
 import os
 import sys
+import time
 from typing import Any, Dict, List
 
 from config import Config
@@ -23,6 +22,10 @@ from strategy import Action, Lot, decide, new_state
 
 STATE_PATH = os.environ.get("STATE_PATH", "state.json")
 EXECUTE = os.environ.get("EXECUTE", "false").lower() == "true"
+# How often a routine "nothing happened" check-in is actually sent to
+# Telegram, per coin -- real trades, halts, and profit-protection are
+# NEVER throttled, only these routine updates. Default: 2 hours.
+ROUTINE_NOTIFY_THROTTLE_SECONDS = int(os.environ.get("ROUTINE_NOTIFY_THROTTLE_SECONDS", 2 * 3600))
 
 
 # ---------------------------------------------------------------- state
@@ -43,18 +46,12 @@ def save_state(state: Dict[str, Any]) -> None:
     tmp = STATE_PATH + ".tmp"
     with open(tmp, "w") as f:
         json.dump(out, f, indent=2)
-    os.replace(tmp, STATE_PATH)   # atomic: a crash mid-write cannot corrupt state
+    os.replace(tmp, STATE_PATH)
 
 
 # ---------------------------------------------------------------- exchange
 
 def fetch_latest_candles(cfg: Config) -> List[Dict[str, Any]]:
-    """
-    Fetches enough real history to cover the active strategy's own
-    lookback, at the RIGHT interval for its family -- 15-minute for
-    NATIVE_CRYPTO (Unyil 2.0, Guardian, Usro), 60-minute for WRAPPER
-    (ORB, GAP), matching exactly what backtesting validated each on.
-    """
     from indodax_data import fetch_paged
     import strategy as active_strategy_module
 
@@ -79,22 +76,15 @@ def fetch_latest_candles(cfg: Config) -> List[Dict[str, Any]]:
 
 
 def fetch_real_balance(cfg: Config) -> Dict[str, float]:
-    """TODO: authenticated Indodax balance call (getInfo / trade API)."""
     raise NotImplementedError("Indodax authenticated balance call not implemented yet")
 
 
 def place_order(action: Action, cfg: Config) -> Dict[str, Any]:
-    """TODO: authenticated Indodax order call (trade API)."""
     raise NotImplementedError("Indodax authenticated order call not implemented yet")
 
 
 def _format_check_report(coin_label: str, state: Dict[str, Any], candle: Dict[str, Any],
                           cfg: Config, regime_note: str, action_line: str = None) -> str:
-    """
-    One consistent, readable block per check -- price, regime (native
-    only), current value vs. principal, and what happened -- instead of
-    a dense one-line technical string.
-    """
     price = candle["close"]
     principal = state.get("principal", cfg.starting_idr)
     current_equity = equity(state, price)
@@ -117,12 +107,21 @@ def _format_check_report(coin_label: str, state: Dict[str, Any], candle: Dict[st
     return "\n".join(l for l in lines if l)
 
 
+def notify_throttled(state: Dict[str, Any], message: str, throttle_seconds: int) -> None:
+    """
+    For routine "nothing happened" check-ins ONLY. Real trades, halts,
+    and profit-protection should NEVER go through this.
+    """
+    print(f"[NOTIFY, throttled] {message}", flush=True)
+    now = time.time()
+    last = state.get("last_routine_notify_ts", 0)
+    if now - last < throttle_seconds:
+        return
+    state["last_routine_notify_ts"] = now
+    notify(message)
+
+
 def notify(message: str) -> None:
-    """
-    Always logs to stdout (picked up by the GitHub Actions log regardless).
-    Sends to Telegram if TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID are both
-    set.
-    """
     print(f"[NOTIFY] {message}", flush=True)
 
     bot_token = os.environ.get("TELEGRAM_BOT_TOKEN")
@@ -238,7 +237,8 @@ def main() -> int:
                f"Withdraw it to your bank whenever you'd like it fully off the exchange.")
 
     if not actions:
-        notify(_format_check_report(coin_label, state, candle, cfg, regime_note))
+        notify_throttled(state, _format_check_report(coin_label, state, candle, cfg, regime_note),
+                          throttle_seconds=ROUTINE_NOTIFY_THROTTLE_SECONDS)
         if state.get("_pending_anchor") is not None:
             state["anchor"] = state["_pending_anchor"]
         save_state(state)

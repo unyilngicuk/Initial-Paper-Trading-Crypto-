@@ -5,7 +5,6 @@
   "hold_bought": false,
   "closes": [
     6185162.0,
-    6185162.0,
     6174783.0,
     6174783.0,
     6174783.0,
@@ -340,6 +339,7 @@
     6290292.0,
     6290292.0,
     6290292.0,
+    6290292.0,
     6290292.0
   ],
   "lots": [],
@@ -347,7 +347,7 @@
   "anchor": null,
   "peak_equity": 250000.0,
   "halted": false,
-  "bars_seen": 421,
+  "bars_seen": 422,
   "trade_history": [],
   "strategy_name": "gap",
   "principal": 250000.0,

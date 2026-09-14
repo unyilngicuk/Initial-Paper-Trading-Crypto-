@@ -4903,7 +4903,7 @@
     44216000.0,
     44300000.0,
     44289000.0,
-    44289000.0
+    44220000.0
   ],
   "lots": [
     {
@@ -4918,7 +4918,7 @@
   "anchor": null,
   "peak_equity": 264230.824093952,
   "halted": false,
-  "bars_seen": 5270,
+  "bars_seen": 5271,
   "risk_frac": 1.0,
   "trade_history": [],
   "consecutive_losses": 0,

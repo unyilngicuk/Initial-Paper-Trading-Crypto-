@@ -1,7 +1,7 @@
 {
   "slot_id": 2,
   "initial_capital": 1000000,
-  "balance": 875037.5423203697,
+  "balance": 0.0,
   "coin": "show",
   "entry_price": 63320.0,
   "peak_price": 63320.0,
@@ -13,5 +13,6 @@
   "last_routine_notify_ts": 1789492596.7806833,
   "loss_cooldown": {
     "puffer": 1789532479.7988095
-  }
+  },
+  "deployed_capital": 1000000.0
 }

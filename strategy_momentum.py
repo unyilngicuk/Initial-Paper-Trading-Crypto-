@@ -70,11 +70,18 @@ def qualifies_for_entry(coin, current_price, price_13h_ago, high_13h, vol_idr, s
         return False, f"price Rp {current_price:,.0f} below Rp {MIN_PRICE_IDR:,.0f}"
     if vol_idr < MIN_VOL_IDR:
         return False, f"volume below Rp {MIN_VOL_IDR/1e6:.0f}M"
-    if not price_13h_ago or price_13h_ago <= 0 or current_price <= 0:
-        return False, "could not fetch 13h price"
-    gain_13h = (current_price - price_13h_ago) / price_13h_ago
-    if gain_13h < MIN_GAIN_13H_PCT:
-        return False, f"13h gain {gain_13h:.1%} below {MIN_GAIN_13H_PCT:.0%}"
+    # 13h gain check -- if candle data unavailable (common for smaller
+    # altcoins on Indodax TradingView endpoint), skip this check rather
+    # than blocking all entries. The pre-filter already requires >= 13%
+    # 24h gain, which is a reasonable proxy when 13h data is missing.
+    if price_13h_ago and price_13h_ago > 0 and current_price > 0:
+        gain_13h = (current_price - price_13h_ago) / price_13h_ago
+        if gain_13h < MIN_GAIN_13H_PCT:
+            return False, f"13h gain {gain_13h:.1%} below {MIN_GAIN_13H_PCT:.0%}"
+    else:
+        print(f"[INFO] no 13h candle data for {coin_l} -- relying on 24h pre-filter", flush=True)
+
+    # Near-high check -- only applied when 13h high data is available
     if high_13h and high_13h > 0:
         drop = (high_13h - current_price) / high_13h
         if drop > MAX_DROP_FROM_13H_HIGH:

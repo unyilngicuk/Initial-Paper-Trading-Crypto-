@@ -89,6 +89,13 @@ def fetch_current_price(coin):
 
 
 def fetch_13h_data(coin):
+    """
+    Returns (price_13h_ago, high_13h) from 1-hour candles.
+    Falls back to None, None if the endpoint returns empty or errors --
+    qualifies_for_entry handles this gracefully by skipping the 13h
+    gain check and only applying the near-high filter when data exists.
+    The TradingView endpoint is unreliable for newer/smaller altcoins.
+    """
     try:
         now_ts = int(time.time())
         from_ts = now_ts - 14 * 3600
@@ -97,7 +104,11 @@ def fetch_13h_data(coin):
                f"&from={from_ts}&to={now_ts}")
         req = urllib.request.Request(url, headers={"User-Agent": UA})
         with urllib.request.urlopen(req, timeout=10) as r:
-            data = json.loads(r.read().decode())
+            raw = r.read().decode().strip()
+        if not raw:
+            print(f"[WARN] 13h fetch: empty response for {coin}", flush=True)
+            return None, None
+        data = json.loads(raw)
         closes = data.get("c", [])
         highs = data.get("h", [])
         if not closes:

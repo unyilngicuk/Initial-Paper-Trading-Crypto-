@@ -134,6 +134,27 @@ def scan_market(summaries, already_held):
             "price_24h_ago": price_24h, "gain_24h_pct": gain_24h, "vol_idr": vol_idr,
         })
     candidates.sort(key=lambda x: x["vol_idr"], reverse=True)
+
+    # Always log to stdout for Actions log visibility
+    eligible = total_idr_pairs - rejected["excluded_or_held"]
+    log_lines = [
+        f"[SCAN] {total_idr_pairs} IDR pairs scanned, "
+        f"{eligible} eligible (excl. portfolio/held)",
+        f"  below Rp{MIN_PRICE_IDR:,.0f}/coin: {rejected['below_min_price']}",
+        f"  below Rp{MIN_VOL_IDR/1e6:.0f}M volume:  {rejected['below_min_volume']}",
+        f"  below {MIN_GAIN_24H_PCT:.0%} 24h gain:  {rejected['below_15pct_24h']}",
+        f"  passed all pre-filters:    {rejected['passed_all']} "
+        f"(10h check happens at entry)",
+        f"  top candidates: "
+        f"{', '.join(c['coin'].upper() + f" ({c['gain_24h_pct']:.0%})" for c in candidates[:5]) or 'none'}",
+    ]
+    for line in log_lines:
+        print(line, flush=True)
+
+    scan_summary = "\n".join(log_lines)
+    for slot in slots:
+        slot._scan_summary = scan_summary
+
     return candidates
 
 
@@ -255,13 +276,13 @@ def main():
         if slot.halted or slot.is_halted_by_loss or slot.is_occupied:
             continue
         if cand_idx >= len(candidates):
+            scan_summary = getattr(slot, "_scan_summary", "")
             notify_throttled(
                 slot,
                 f"[MOMENTUM slot {slot.slot_id}] Check-in\n"
-                f"Status: empty -- no qualifying coins\n"
-                f"Filters: >={MIN_GAIN_24H_PCT:.0%} 24h, <{MAX_GAIN_10H_PCT:.0%} 10h, "
-                f">Rp{MIN_VOL_IDR/1e6:.0f}M vol, >Rp{MIN_PRICE_IDR:,.0f}/coin\n"
-                f"Slot balance from start: {slot.balance_pct:+.2f}%"
+                f"Status: empty -- no qualifying coins found\n"
+                f"Slot balance from start: {slot.balance_pct:+.2f}%\n"
+                f"{scan_summary}"
             )
             save_slot(slot, path)
             continue

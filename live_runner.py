@@ -165,6 +165,8 @@ def main() -> int:
         cfg.starting_idr = float(os.environ["STARTING_IDR"])
     if os.environ.get("GAP_MODE"):
         cfg.gap_mode = os.environ["GAP_MODE"]
+    if os.environ.get("UNYIL2_TRAIL_PCT"):
+        cfg.unyil2_trail_pct = float(os.environ["UNYIL2_TRAIL_PCT"])
 
     coin_label = cfg.coin.upper()
 

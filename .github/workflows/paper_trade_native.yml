@@ -35,6 +35,7 @@ jobs:
           COIN: ${{ matrix.coin }}
           STATE_PATH: state_${{ matrix.coin }}.json
           STARTING_IDR: "250000"
+          UNYIL2_TRAIL_PCT: "0.10"   # 10% trailing stop -- see spec Section 11m
           EXECUTE: "false"
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}

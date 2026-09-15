@@ -4903,14 +4903,14 @@
     1362060000.0,
     1360465000.0,
     1357003000.0,
-    1357470000.0
+    1356700000.0
   ],
   "lots": [],
   "next_lot_id": 2,
   "anchor": null,
   "peak_equity": 254905.72288801477,
   "halted": false,
-  "bars_seen": 5353,
+  "bars_seen": 5354,
   "risk_frac": 1.0,
   "trade_history": [
     {

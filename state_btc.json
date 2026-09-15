@@ -5,7 +5,6 @@
   "hold_bought": false,
   "closes": [
     1155330000.0,
-    1155330000.0,
     1155338000.0,
     1155948000.0,
     1157880000.0,
@@ -4903,14 +4902,15 @@
     1340000000.0,
     1339677000.0,
     1343034000.0,
-    1340402000.0
+    1343155000.0,
+    1340412000.0
   ],
   "lots": [],
   "next_lot_id": 1,
   "anchor": null,
   "peak_equity": 1000000.0,
   "halted": false,
-  "bars_seen": 4945,
+  "bars_seen": 4946,
   "risk_frac": 1.0,
   "trade_history": [],
   "consecutive_losses": 0,

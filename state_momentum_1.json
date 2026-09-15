@@ -1,12 +1,12 @@
 {
   "slot_id": 1,
-  "coin": "nvdax",
-  "entry_price": 4655559.0,
-  "peak_price": 4705950.0,
-  "qty_coin": 0.21477313465472136,
+  "coin": "amznx",
+  "entry_price": 5389983.0,
+  "peak_price": 5389983.0,
+  "qty_coin": 0.18285302731192113,
   "idr": 0.0,
   "halted": false,
   "bars_seen": 0,
-  "entry_ts": 1789464974,
+  "entry_ts": 1789467176,
   "last_routine_notify_ts": 1789466248.3813748
 }

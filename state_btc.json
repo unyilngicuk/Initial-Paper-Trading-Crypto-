@@ -1,10 +1,9 @@
 {
-  "idr": 0.0,
-  "grid_coin": 0.00018272798577779857,
+  "idr": 247696.41747507406,
+  "grid_coin": 0.0,
   "hold_coin": 0.0,
   "hold_bought": false,
   "closes": [
-    1152504000.0,
     1152604000.0,
     1152604000.0,
     1151616000.0,
@@ -4903,25 +4902,24 @@
     1363003000.0,
     1361999000.0,
     1362060000.0,
-    1362060000.0
+    1360465000.0,
+    1358551000.0
   ],
-  "lots": [
-    {
-      "lot_id": 1,
-      "level_idx": 0,
-      "qty_coin": 0.00018272798577779857,
-      "entry_price": 1368002000.0,
-      "entry_ts": 1789027200
-    }
-  ],
+  "lots": [],
   "next_lot_id": 2,
   "anchor": null,
   "peak_equity": 254905.72288801477,
   "halted": false,
-  "bars_seen": 5351,
+  "bars_seen": 5352,
   "risk_frac": 1.0,
-  "trade_history": [],
-  "consecutive_losses": 0,
+  "trade_history": [
+    {
+      "ts": 1789458300,
+      "pnl_pct": -0.006908615630678902,
+      "won": false
+    }
+  ],
+  "consecutive_losses": 1,
   "strategy_name": "unyil2",
   "principal": 250000.0,
   "profit_reserve": 0.0,

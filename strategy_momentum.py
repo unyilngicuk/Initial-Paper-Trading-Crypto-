@@ -5,7 +5,7 @@ STRATEGY_FAMILY = "MOMENTUM"
 HARD_STOP_PCT          = 0.03
 TRAIL_PCT              = 0.03
 ROUNDTRIP_FEE_PCT      = 0.0023
-MIN_GAIN_13H_PCT       = 0.13
+MIN_GAIN_21H_PCT       = 0.13
 MAX_DROP_FROM_13H_HIGH = 0.05
 INITIAL_CAPITAL        = 1_000_000
 HALT_THRESHOLD         = 0.60
@@ -77,8 +77,8 @@ def qualifies_for_entry(coin, current_price, price_13h_ago, high_13h, vol_idr, s
     # 24h gain, which is a reasonable proxy when 13h data is missing.
     if price_13h_ago and price_13h_ago > 0 and current_price > 0:
         gain_13h = (current_price - price_13h_ago) / price_13h_ago
-        if gain_13h < MIN_GAIN_13H_PCT:
-            return False, f"13h gain {gain_13h:.1%} below {MIN_GAIN_13H_PCT:.0%}"
+        if gain_13h < MIN_GAIN_21H_PCT:
+            return False, f"13h gain {gain_13h:.1%} below {MIN_GAIN_21H_PCT:.0%}"
     else:
         print(f"[INFO] no 13h candle data for {coin_l} -- relying on 24h pre-filter", flush=True)
 

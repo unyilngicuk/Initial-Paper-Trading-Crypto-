@@ -4,9 +4,12 @@
   "entry_price": 451.0,
   "peak_price": 451.0,
   "qty_coin": 2181.728279321967,
-  "idr": 0.0,
   "halted": false,
-  "bars_seen": 0,
   "entry_ts": 1789472550,
-  "last_routine_notify_ts": 1789466249.9854076
+  "last_routine_notify_ts": 1789466249.9854076,
+  "balance": 1000000,
+  "initial_capital": 1000000,
+  "trade_count": 0,
+  "total_pnl": 0.0,
+  "loss_cooldown": {}
 }

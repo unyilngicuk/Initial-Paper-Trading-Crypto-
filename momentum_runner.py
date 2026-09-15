@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Tuple
 from strategy_momentum import (
     COOLDOWN_HOURS, EXCLUDED_COINS, HALT_THRESHOLD, HARD_STOP_PCT,
-    INITIAL_CAPITAL, MAX_DROP_FROM_13H_HIGH, MIN_GAIN_13H_PCT,
+    INITIAL_CAPITAL, MAX_DROP_FROM_13H_HIGH, MIN_GAIN_21H_PCT,
     MIN_PRICE_IDR, MIN_VOL_IDR, ROUNDTRIP_FEE_PCT, TRAIL_PCT,
     MomentumSlot, check_exit, qualifies_for_entry,
 )
@@ -161,7 +161,7 @@ def scan_market(summaries, already_held, slots):
             rejected["no_price_data"] += 1
             continue
         gain_24h = (current - price_24h) / price_24h
-        if gain_24h < MIN_GAIN_13H_PCT:
+        if gain_24h < MIN_GAIN_21H_PCT:
             rejected["below_gain_threshold"] += 1
             continue
         rejected["passed_prefilter"] += 1
@@ -176,7 +176,7 @@ def scan_market(summaries, already_held, slots):
         f"[SCAN] {total_idr_pairs} IDR pairs, {eligible} eligible",
         f"  below Rp{MIN_PRICE_IDR:,.0f}/coin:   {rejected['below_min_price']}",
         f"  below Rp{MIN_VOL_IDR//1_000_000}M volume: {rejected['below_min_volume']}",
-        f"  below {MIN_GAIN_13H_PCT:.0%} 24h gain: {rejected['below_gain_threshold']}",
+        f"  below {MIN_GAIN_21H_PCT:.0%} 24h gain: {rejected['below_gain_threshold']}",
         f"  passed pre-filter: {rejected['passed_prefilter']} (13h+near-high checked at entry)",
         f"  top: {top_str}",
     ]

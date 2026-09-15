@@ -1,11 +1,10 @@
-
 import json, os, sys, time, urllib.parse, urllib.request
 from dataclasses import asdict
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 from strategy_momentum import (
     COOLDOWN_HOURS, EXCLUDED_COINS, HALT_THRESHOLD, HARD_STOP_PCT,
-    INITIAL_CAPITAL, MAX_GAIN_5H_PCT, MIN_GAIN_24H_PCT,
+    INITIAL_CAPITAL, MAX_DROP_FROM_13H_HIGH, MIN_GAIN_13H_PCT,
     MIN_PRICE_IDR, MIN_VOL_IDR, ROUNDTRIP_FEE_PCT, TRAIL_PCT,
     MomentumSlot, check_exit, qualifies_for_entry,
 )
@@ -52,11 +51,13 @@ def load_slot(path, slot_id):
     with open(path) as f:
         d = json.load(f)
     d.setdefault("initial_capital", INITIAL_CAPITAL)
-    d.setdefault("balance", d.pop("idr", INITIAL_CAPITAL))
+    if d.get("balance") is None:
+        d["balance"] = INITIAL_CAPITAL
     d.setdefault("trade_count", 0)
     d.setdefault("total_pnl", 0.0)
     d.setdefault("loss_cooldown", {})
-    for old in ["idr", "bars_seen"]:
+    for old in ["idr", "bars_seen", "lots", "principal", "profit_reserve",
+                "anchor", "_pending_anchor", "closes", "strategy_name"]:
         d.pop(old, None)
     return MomentumSlot(**d)
 
@@ -83,78 +84,95 @@ def fetch_current_price(coin):
             data = json.loads(r.read().decode())
         return float(data["ticker"]["last"])
     except Exception as e:
-        print(f"[WARN] could not fetch price for {coin}: {e}", flush=True)
+        print(f"[WARN] price fetch failed for {coin}: {e}", flush=True)
         return None
 
 
-def fetch_price_5h_ago(coin):
+def fetch_13h_data(coin):
     try:
         now_ts = int(time.time())
-        ts_5h = now_ts - 5 * 3600
+        from_ts = now_ts - 14 * 3600
         url = (f"{INDODAX_BASE}/tradingview/history"
                f"?symbol={coin.upper()}_IDR&resolution=60"
-               f"&from={ts_5h - 3600}&to={ts_5h + 3600}")
+               f"&from={from_ts}&to={now_ts}")
         req = urllib.request.Request(url, headers={"User-Agent": UA})
         with urllib.request.urlopen(req, timeout=10) as r:
             data = json.loads(r.read().decode())
         closes = data.get("c", [])
-        return float(closes[-1]) if closes else None
+        highs = data.get("h", [])
+        if not closes:
+            return None, None
+        price_13h_ago = float(closes[-13]) if len(closes) >= 13 else float(closes[0])
+        recent_highs = highs[-13:] if highs else []
+        high_13h = max(float(h) for h in recent_highs) if recent_highs else None
+        return price_13h_ago, high_13h
     except Exception as e:
-        print(f"[WARN] could not fetch 10h price for {coin}: {e}", flush=True)
-        return None
+        print(f"[WARN] 13h fetch failed for {coin}: {e}", flush=True)
+        return None, None
 
 
-def scan_market(summaries, already_held):
+def scan_market(summaries, already_held, slots):
     tickers = summaries.get("tickers", {})
     prices_24h = summaries.get("prices_24h", {})
+    total_idr_pairs = 0
+    rejected = {"excluded_or_held": 0, "no_price_data": 0,
+                "below_min_price": 0, "below_min_volume": 0,
+                "below_gain_threshold": 0, "passed_prefilter": 0}
     candidates = []
     for pair_id, ticker in tickers.items():
         if not pair_id.endswith("_idr"):
             continue
+        total_idr_pairs += 1
         coin = pair_id[:-4]
         if coin in EXCLUDED_COINS or coin in already_held:
+            rejected["excluded_or_held"] += 1
             continue
         pair_key = pair_id.replace("_", "")
         price_24h_str = prices_24h.get(pair_key)
         if not price_24h_str:
+            rejected["no_price_data"] += 1
             continue
         try:
             current = float(ticker.get("last", 0))
             price_24h = float(price_24h_str)
             vol_idr = float(ticker.get("vol_idr", 0))
         except (ValueError, TypeError):
+            rejected["no_price_data"] += 1
             continue
-        if current < MIN_PRICE_IDR or vol_idr < MIN_VOL_IDR or price_24h <= 0:
+        if current < MIN_PRICE_IDR:
+            rejected["below_min_price"] += 1
+            continue
+        if vol_idr < MIN_VOL_IDR:
+            rejected["below_min_volume"] += 1
+            continue
+        if price_24h <= 0:
+            rejected["no_price_data"] += 1
             continue
         gain_24h = (current - price_24h) / price_24h
-        if gain_24h < MIN_GAIN_24H_PCT:
+        if gain_24h < MIN_GAIN_13H_PCT:
+            rejected["below_gain_threshold"] += 1
             continue
-        candidates.append({
-            "coin": coin, "current_price": current,
-            "price_24h_ago": price_24h, "gain_24h_pct": gain_24h, "vol_idr": vol_idr,
-        })
+        rejected["passed_prefilter"] += 1
+        candidates.append({"coin": coin, "current_price": current,
+                            "gain_24h_pct": gain_24h, "vol_idr": vol_idr})
     candidates.sort(key=lambda x: x["vol_idr"], reverse=True)
-
-    # Always log to stdout for Actions log visibility
     eligible = total_idr_pairs - rejected["excluded_or_held"]
+    top_str = ", ".join(
+        c["coin"].upper() + " (" + "{:.0%}".format(c["gain_24h_pct"]) + ")"
+        for c in candidates[:5]) or "none"
     log_lines = [
-        f"[SCAN] {total_idr_pairs} IDR pairs scanned, "
-        f"{eligible} eligible (excl. portfolio/held)",
-        f"  below Rp{MIN_PRICE_IDR:,.0f}/coin: {rejected['below_min_price']}",
-        f"  below Rp{MIN_VOL_IDR/1e6:.0f}M volume:  {rejected['below_min_volume']}",
-        f"  below {MIN_GAIN_24H_PCT:.0%} 24h gain:  {rejected['below_15pct_24h']}",
-        f"  passed all pre-filters:    {rejected['passed_all']} "
-        f"(10h check happens at entry)",
-        f"  top candidates: "
-        f"  top candidates: {', '.join(c['coin'].upper() + ' (' + '{:.0%}'.format(c['gain_24h_pct']) + ')' for c in candidates[:5]) or 'none'}",
+        f"[SCAN] {total_idr_pairs} IDR pairs, {eligible} eligible",
+        f"  below Rp{MIN_PRICE_IDR:,.0f}/coin:   {rejected['below_min_price']}",
+        f"  below Rp{MIN_VOL_IDR//1_000_000}M volume: {rejected['below_min_volume']}",
+        f"  below {MIN_GAIN_13H_PCT:.0%} 24h gain: {rejected['below_gain_threshold']}",
+        f"  passed pre-filter: {rejected['passed_prefilter']} (13h+near-high checked at entry)",
+        f"  top: {top_str}",
     ]
     for line in log_lines:
         print(line, flush=True)
-
     scan_summary = "\n".join(log_lines)
     for slot in slots:
         slot._scan_summary = scan_summary
-
     return candidates
 
 
@@ -182,63 +200,56 @@ def handle_exit(slot, current_price, path):
         slot.halted = True
     save_slot(slot, path)
     halt_warning = (
-        f"\nSLOT HALTED: balance Rp {slot.balance:,.0f} ({overall_pct:+.1f}%) "
-        f"-- 40% loss threshold reached. Manual reset required."
+        f"\nSLOT HALTED: balance Rp {slot.balance:,.0f} ({overall_pct:+.1f}%) -- 40% loss reached."
         if slot.halted else ""
     )
     notify(
         f"[MOMENTUM slot {slot.slot_id}] EXIT -- {coin.upper()}\n"
         f"Reason: {reason}\n"
-        f"Trade P&L: Rp {trade_pnl:+,.0f} ({trade_pnl_pct:+.2f}% on this trade)\n"
+        f"Trade P&L: Rp {trade_pnl:+,.0f} ({trade_pnl_pct:+.2f}%)\n"
         f"Slot balance: Rp {slot.balance:,.0f} ({overall_pct:+.2f}% from start)\n"
-        f"Total P&L all trades: Rp {slot.total_pnl:+,.0f}"
-        f"{halt_warning}"
+        f"Total P&L: Rp {slot.total_pnl:+,.0f}{halt_warning}"
     )
     return True
 
 
-def handle_entry(slot, candidate, price_10h_ago, path):
-    qualified, reason = qualifies_for_entry(
-        coin=candidate["coin"],
-        current_price=candidate["current_price"],
-        price_24h_ago=candidate["price_24h_ago"],
-        price_10h_ago=price_10h_ago or 0.0,
-        vol_idr=candidate["vol_idr"],
-        slot=slot,
-    )
-    if not qualified:
-        print(f"[SKIP] {candidate['coin']}: {reason}", flush=True)
-        return
+def handle_entry(slot, candidate, path):
     coin = candidate["coin"]
-    price = candidate["current_price"]
-    gain_24h = candidate["gain_24h_pct"]
-    vol_idr = candidate["vol_idr"]
-    gain_10h_str = ""
-    if price_10h_ago and price_10h_ago > 0:
-        gain_10h = (price - price_10h_ago) / price_10h_ago
-        gain_10h_str = f" | 10h: {gain_10h:.1%}"
+    price_13h_ago, high_13h = fetch_13h_data(coin)
+    current_price = candidate["current_price"]
+    qualified, reason = qualifies_for_entry(
+        coin=coin, current_price=current_price,
+        price_13h_ago=price_13h_ago, high_13h=high_13h,
+        vol_idr=candidate["vol_idr"], slot=slot)
+    if not qualified:
+        print(f"[SKIP] {coin}: {reason}", flush=True)
+        return
+    gain_13h_str = ""
+    if price_13h_ago and price_13h_ago > 0:
+        gain_13h = (current_price - price_13h_ago) / price_13h_ago
+        gain_13h_str = f" | 13h: {gain_13h:.1%}"
+    high_str = f" | 13h high: Rp {high_13h:,.0f}" if high_13h else ""
     investable = slot.balance * (1.0 - 0.000111)
-    qty = investable / price
+    qty = investable / current_price
     slot.coin = coin
-    slot.entry_price = price
-    slot.peak_price = price
+    slot.entry_price = current_price
+    slot.peak_price = current_price
     slot.qty_coin = qty
     slot.entry_ts = int(time.time())
     save_slot(slot, path)
     notify(
         f"[MOMENTUM slot {slot.slot_id}] ENTRY [PAPER TRADE]\n"
         f"Coin: {coin.upper()}\n"
-        f"24h gain: {gain_24h:.1%}{gain_10h_str} | Vol: Rp {vol_idr/1e6:.0f}M\n"
-        f"Entry price: Rp {price:,.0f}\n"
-        f"Qty: {qty:.6f} {coin.upper()}\n"
-        f"Capital deployed: Rp {slot.balance:,.0f} (slot: {slot.balance_pct:+.1f}% from start)\n"
-        f"Exits: hard stop {HARD_STOP_PCT:.0%} | breakeven+fees | trail {TRAIL_PCT:.0%}"
+        f"24h: {candidate['gain_24h_pct']:.1%}{gain_13h_str}{high_str}\n"
+        f"Entry: Rp {current_price:,.0f} | Vol: Rp {candidate['vol_idr']/1e6:.0f}M\n"
+        f"Qty: {qty:.4f} {coin.upper()}\n"
+        f"Capital: Rp {slot.balance:,.0f} ({slot.balance_pct:+.1f}%)\n"
+        f"Exits: hard {HARD_STOP_PCT:.0%} | breakeven | trail {TRAIL_PCT:.0%}"
     )
 
 
 def main():
-    now_utc = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-    print(f"[MOMENTUM] Running at {now_utc}", flush=True)
+    print(f"[MOMENTUM] {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}", flush=True)
     slots = [load_slot(path, i+1) for i, path in enumerate(SLOT_STATE_PATHS)]
     if all(s.halted or s.is_halted_by_loss for s in slots):
         notify("[MOMENTUM] Both slots halted -- no action.")
@@ -253,48 +264,43 @@ def main():
             continue
         current_price = fetch_current_price(slot.coin)
         if current_price is None:
-            notify(f"[MOMENTUM slot {slot.slot_id}] Could not fetch price for {slot.coin.upper()}.")
+            notify(f"[MOMENTUM slot {slot.slot_id}] Price fetch failed for {slot.coin.upper()}.")
             continue
         equity = slot.qty_coin * current_price
         trade_pct = (equity - slot.balance) / slot.balance * 100 if slot.balance > 0 else 0.0
         exited = handle_exit(slot, current_price, path)
         if not exited:
-            notify_throttled(
-                slot,
+            notify_throttled(slot,
                 f"[MOMENTUM slot {slot.slot_id}] Check-in\n"
                 f"Coin: {slot.coin.upper()}\n"
                 f"Price: Rp {current_price:,.0f}\n"
-                f"This trade: Rp {equity:,.0f} ({trade_pct:+.2f}%)\n"
-                f"Peak: Rp {slot.peak_price:,.0f}\n"
-                f"Slot balance from start: {slot.balance_pct:+.2f}%\n"
-                f"Action: holding -- no exit triggered"
-            )
+                f"Trade: Rp {equity:,.0f} ({trade_pct:+.2f}%) | Peak: Rp {slot.peak_price:,.0f}\n"
+                f"Slot from start: {slot.balance_pct:+.2f}%\n"
+                f"Action: holding")
             save_slot(slot, path)
-    candidates = scan_market(summaries, already_held={s.coin for s in slots if s.coin})
+    candidates = scan_market(summaries,
+                             already_held={s.coin for s in slots if s.coin},
+                             slots=slots)
     cand_idx = 0
     for slot, path in zip(slots, SLOT_STATE_PATHS):
         if slot.halted or slot.is_halted_by_loss or slot.is_occupied:
             continue
         if cand_idx >= len(candidates):
             scan_summary = getattr(slot, "_scan_summary", "")
-            notify_throttled(
-                slot,
+            notify_throttled(slot,
                 f"[MOMENTUM slot {slot.slot_id}] Check-in\n"
-                f"Status: empty -- no qualifying coins found\n"
-                f"Slot balance from start: {slot.balance_pct:+.2f}%\n"
-                f"{scan_summary}"
-            )
+                f"Status: empty -- no qualifying coins\n"
+                f"Slot from start: {slot.balance_pct:+.2f}%\n"
+                f"{scan_summary}")
             save_slot(slot, path)
             continue
         entered = False
         while cand_idx < len(candidates) and not entered:
             candidate = candidates[cand_idx]
             cand_idx += 1
-            price_10h = fetch_price_5h_ago(candidate["coin"])
-            handle_entry(slot, candidate, price_10h, path)
+            handle_entry(slot, candidate, path)
             entered = slot.is_occupied
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())

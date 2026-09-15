@@ -1,245 +1,180 @@
-"""
-Tests for Unyil Momentum (strategy_momentum.py).
-
-Run: python3 test_momentum.py
-"""
-
-from config import Config
-from engine import apply_fill, check_drawdown, verify_balance
-from strategy_momentum import Lot, decide, new_state
-
-
-def make_cfg(**overrides) -> Config:
-    cfg = Config()
-    cfg.use_venue("indodax_maker")
-    cfg.momentum_trend_period = 10   # small, so synthetic tests run fast
-    cfg.warmup_bars = 5
-    cfg.history_window = 200
-    cfg.momentum_entry_buffer_pct = 0.001
-    cfg.momentum_max_exposure = 1.00
-    cfg.momentum_trail_pct = 0.15
-    for k, v in overrides.items():
-        setattr(cfg, k, v)
-    return cfg
+import time
+from strategy_momentum import (
+    MomentumSlot, check_exit, qualifies_for_entry,
+    HARD_STOP_PCT, TRAIL_PCT, ROUNDTRIP_FEE_PCT,
+    MIN_GAIN_13H_PCT, MAX_DROP_FROM_13H_HIGH, EXCLUDED_COINS,
+    INITIAL_CAPITAL, HALT_THRESHOLD, MIN_PRICE_IDR,
+    MIN_VOL_IDR, COOLDOWN_HOURS,
+)
 
 
-def make_candle(ts: int, price: float) -> dict:
-    return {"ts": ts, "open": price, "high": price, "low": price,
-            "close": price, "volume": 1.0}
+def make_slot(coin="doge", entry_price=1000.0, balance=None):
+    s = MomentumSlot(slot_id=1, coin=coin, entry_price=entry_price,
+                     peak_price=entry_price, qty_coin=100.0,
+                     balance=balance or INITIAL_CAPITAL,
+                     entry_ts=int(time.time()))
+    return s
 
 
-def run_series(prices, cfg, ts0=1_700_000_000, bar=900):
-    state = new_state(cfg)
-    fills = []
-    for i, price in enumerate(prices):
-        candle = make_candle(ts0 + i * bar, price)
-        state["closes"].append(price)
-        if len(state["closes"]) > cfg.history_window:
-            state["closes"] = state["closes"][-cfg.history_window:]
-        state["bars_seen"] += 1
-        check_drawdown(state, price, cfg)
-        for action in decide(state, candle, cfg):
-            apply_fill(state, action, candle, cfg, fills)
-            err = verify_balance(state)
-            assert err is None, f"balance check failed at bar {i}: {err}"
-    return state, fills
+def test_hard_stop_fires():
+    slot = make_slot(entry_price=1000.0)
+    _, exit_type = check_exit(slot, 1000.0 * (1 - HARD_STOP_PCT))
+    assert exit_type == "hard_stop"
+    print("  ok  hard stop fires at -3% from entry")
 
+def test_hard_stop_silent_on_shallow():
+    slot = make_slot(entry_price=1000.0)
+    _, exit_type = check_exit(slot, 980.0)
+    assert exit_type is None
+    print("  ok  hard stop silent on -2% drop")
 
-# ---------------------------------------------------------- distinctive behaviour
+def test_breakeven_fires_after_rising():
+    slot = make_slot(entry_price=1000.0)
+    breakeven = 1000.0 * (1 + ROUNDTRIP_FEE_PCT)
+    check_exit(slot, breakeven + 5.0)
+    _, exit_type = check_exit(slot, breakeven - 1.0)
+    assert exit_type == "breakeven_stop"
+    print("  ok  breakeven stop fires after rise then fall back")
 
-def test_enters_fast_with_minimal_buffer():
-    cfg = make_cfg()
-    flat = [100.0] * 15
-    rise = [100.0 * (1.01 ** i) for i in range(1, 6)]
-    state, fills = run_series(flat + rise, cfg)
-    buys = [f for f in fills if f.side == "buy"]
-    assert buys, "never entered despite a clear signal within a handful of bars"
-    assert buys[0].gross_idr > cfg.starting_idr * 0.95, (
-        f"entered with only {buys[0].gross_idr:,.0f} of {cfg.starting_idr:,.0f} "
-        f"-- expected near-full commitment"
-    )
-    print(f"  ok  enters within a handful of bars, at {buys[0].gross_idr/cfg.starting_idr:.0%} exposure")
+def test_breakeven_silent_without_rise():
+    slot = make_slot(entry_price=1000.0)
+    _, exit_type = check_exit(slot, 1001.0)
+    assert exit_type is None
+    print("  ok  breakeven stop silent if price never rose above it")
 
+def test_trailing_fires():
+    slot = make_slot(entry_price=1000.0)
+    check_exit(slot, 1200.0)
+    _, exit_type = check_exit(slot, 1200.0 * (1 - TRAIL_PCT) - 1)
+    assert exit_type == "trailing_stop"
+    print(f"  ok  trailing stop fires on {TRAIL_PCT:.0%} drop from peak")
 
-def test_survives_a_normal_pullback_that_would_shake_out_a_trend_exit():
-    """
-    The core design claim: a real ~8% pullback inside a continuing rally
-    must NOT trigger an exit, because there is no trend-break rule to
-    trigger it -- only the much wider trailing stop.
-    """
-    cfg = make_cfg(momentum_trail_pct=0.15)
-    flat = [100.0] * 15
-    rise = [100.0 * (1.02 ** i) for i in range(1, 20)]
-    peak = rise[-1]
-    pullback = [peak * (1 - 0.008 * i) for i in range(1, 10)]  # ~8% pullback
-    resume = [pullback[-1] * (1.02 ** i) for i in range(1, 15)]
+def test_trailing_silent_on_shallow():
+    slot = make_slot(entry_price=1000.0)
+    check_exit(slot, 1200.0)
+    _, exit_type = check_exit(slot, 1200.0 * 0.98)
+    assert exit_type is None
+    print("  ok  trailing stop silent on shallow pullback")
 
-    state, fills = run_series(flat + rise + pullback + resume, cfg)
-    sells = [f for f in fills if f.side == "sell"]
-    assert not sells, (
-        f"exited during an 8% pullback -- the whole point of this strategy "
-        f"is surviving exactly this, got {len(sells)} sell(s)"
-    )
-    print("  ok  holds through an 8% pullback that a trend-break exit would have triggered")
+def test_hard_stop_priority():
+    slot = make_slot(entry_price=1000.0)
+    check_exit(slot, 1050.0)
+    _, exit_type = check_exit(slot, 900.0)
+    assert exit_type == "hard_stop"
+    print("  ok  hard stop takes priority over trailing")
 
+def test_peak_tracks():
+    slot = make_slot(entry_price=1000.0)
+    check_exit(slot, 1100.0)
+    assert slot.peak_price == 1100.0
+    check_exit(slot, 1200.0)
+    assert slot.peak_price == 1200.0
+    check_exit(slot, 1150.0)
+    assert slot.peak_price == 1200.0
+    print("  ok  peak_price tracks correctly")
 
-def test_trailing_stop_still_fires_on_a_genuine_reversal():
-    cfg = make_cfg(momentum_trail_pct=0.15)
-    flat = [100.0] * 15
-    rise = [100.0 * (1.02 ** i) for i in range(1, 25)]
-    peak = rise[-1]
-    crash = [peak * (0.97 ** i) for i in range(1, 15)]  # a real, deep reversal
+def test_empty_slot_no_exit():
+    slot = MomentumSlot(slot_id=1)
+    _, exit_type = check_exit(slot, 1000.0)
+    assert exit_type is None
+    print("  ok  empty slot never exits")
 
-    state, fills = run_series(flat + rise + crash, cfg)
-    sells = [f for f in fills if f.side == "sell"]
-    assert sells, "never exited despite a genuine deep reversal"
-    assert "trailing stop" in sells[0].reason
-    exit_price = sells[0].price
-    assert exit_price < peak * 0.86, (
-        f"exited too early relative to the 15% trail: exit {exit_price:.1f}, peak {peak:.1f}"
-    )
-    print(f"  ok  trailing stop fires on a genuine reversal (exited near {exit_price/peak:.0%} of peak)")
+def test_qualifies_fully():
+    slot = MomentumSlot(slot_id=1)
+    ok, reason = qualifies_for_entry("doge", 1150.0, 1000.0, 1160.0, 200_000_000, slot)
+    assert ok, f"should qualify: {reason}"
+    print("  ok  coin passing all filters qualifies")
 
+def test_fails_below_13pct_gain():
+    slot = MomentumSlot(slot_id=1)
+    ok, _ = qualifies_for_entry("doge", 1120.0, 1000.0, 1130.0, 200_000_000, slot)
+    assert not ok
+    print("  ok  rejects <13% 13h gain")
 
-def test_no_trend_break_rule_exists_at_all():
-    """
-    Directly confirm there's no secondary exit condition: price falling
-    below the trend average, while still comfortably above the trailing
-    stop, must not exit.
-    """
-    cfg = make_cfg(momentum_trail_pct=0.15)
-    state = new_state(cfg)
-    state["bars_seen"] = 100
-    state["closes"] = [100.0] * cfg.momentum_trend_period
-    state["lots"] = [Lot(lot_id=1, level_idx=0, qty_coin=1.0, entry_price=100.0, entry_ts=0)]
-    state["grid_coin"] = 1.0
-    state["high_water_price"] = 120.0   # position has run up
+def test_fails_too_far_from_high():
+    slot = MomentumSlot(slot_id=1)
+    ok, reason = qualifies_for_entry("doge", 1150.0, 1000.0, 1280.0, 200_000_000, slot)
+    assert not ok, f"should reject (too far from high): {reason}"
+    print("  ok  rejects when price >5% below 13h high")
 
-    # Price now below the flat 100 trend average, but well within the 15%
-    # trail from the 120 peak (stop sits at 102).
-    candle = make_candle(1_700_000_000, 105.0)
-    actions = decide(state, candle, cfg)
-    assert actions == [], (
-        f"exited on a trend-average dip despite being nowhere near the "
-        f"trailing stop -- a trend-break rule leaked back in: {actions}"
-    )
-    print("  ok  no trend-break exit exists -- only the trailing stop can exit")
+def test_passes_near_high():
+    slot = MomentumSlot(slot_id=1)
+    ok, reason = qualifies_for_entry("doge", 1150.0, 1000.0, 1185.0, 200_000_000, slot)
+    assert ok, f"should pass (near high): {reason}"
+    print("  ok  accepts entry when within 5% of 13h high")
 
+def test_excludes_portfolio_coins():
+    slot = MomentumSlot(slot_id=1)
+    for coin in EXCLUDED_COINS:
+        ok, _ = qualifies_for_entry(coin, 2000.0, 1000.0, 2100.0, 999_999_999, slot)
+        assert not ok
+    print("  ok  excluded coins never qualify")
 
-# ---------------------------------------------------------- safety carried over
+def test_rejects_low_price():
+    slot = MomentumSlot(slot_id=1)
+    ok, _ = qualifies_for_entry("doge", MIN_PRICE_IDR - 1, 200.0, 310.0, 200_000_000, slot)
+    assert not ok
+    print(f"  ok  rejects coins below Rp {MIN_PRICE_IDR:,.0f}")
 
-def test_halt_blocks_new_entries_but_never_the_exit():
-    cfg = make_cfg()
-    state = new_state(cfg)
-    state["halted"] = True
-    state["bars_seen"] = 100
-    state["closes"] = [100.0] * cfg.momentum_trend_period
-    state["lots"] = [Lot(lot_id=1, level_idx=0, qty_coin=1.0, entry_price=100.0, entry_ts=0)]
-    state["grid_coin"] = 1.0
-    state["high_water_price"] = 100.0
+def test_rejects_low_volume():
+    slot = MomentumSlot(slot_id=1)
+    ok, _ = qualifies_for_entry("doge", 1150.0, 1000.0, 1160.0, MIN_VOL_IDR - 1, slot)
+    assert not ok
+    print(f"  ok  rejects volume below Rp {MIN_VOL_IDR/1e6:.0f}M")
 
-    candle = make_candle(1_700_000_000, 80.0)   # past the 15% trail from entry
-    actions = decide(state, candle, cfg)
-    assert len(actions) == 1 and actions[0].side == "sell", (
-        f"halt blocked the trailing stop -- safety violation: {actions}"
-    )
-    print("  ok  halt never blocks the trailing stop exit")
+def test_loss_cooldown_blocks():
+    slot = MomentumSlot(slot_id=1)
+    slot.loss_cooldown["doge"] = time.time() + COOLDOWN_HOURS * 3600
+    ok, reason = qualifies_for_entry("doge", 1150.0, 1000.0, 1160.0, 200_000_000, slot)
+    assert not ok and "cooldown" in reason
+    print(f"  ok  loss cooldown blocks re-entry for {COOLDOWN_HOURS}h")
 
-    state2 = new_state(cfg)
-    state2["halted"] = True
-    state2["bars_seen"] = 100
-    state2["closes"] = [100.0] * (cfg.momentum_trend_period - 1) + [50.0]
-    blocked = decide(state2, make_candle(1_700_000_900, 500.0), cfg)
-    assert blocked == [], f"entered a new position while halted: {blocked}"
-    print("  ok  halt blocks new entries")
+def test_cooldown_expires():
+    slot = MomentumSlot(slot_id=1)
+    slot.loss_cooldown["doge"] = time.time() - 1
+    ok, _ = qualifies_for_entry("doge", 1150.0, 1000.0, 1160.0, 200_000_000, slot)
+    assert ok
+    print("  ok  expired cooldown allows re-entry")
 
+def test_initial_balance():
+    slot = MomentumSlot(slot_id=1)
+    assert slot.balance == INITIAL_CAPITAL and slot.balance_pct == 0.0
+    print(f"  ok  initial balance Rp {INITIAL_CAPITAL:,.0f}")
 
-def test_decide_never_moves_money():
-    cfg = make_cfg()
-    state = new_state(cfg)
-    state["bars_seen"] = 100
-    state["closes"] = [100.0 + i * 0.1 for i in range(cfg.momentum_trend_period + 5)]
-    before = (state["idr"], state["grid_coin"], state["hold_coin"])
-    for i in range(50):
-        decide(state, make_candle(1_700_000_000 + i * 900, 100.0 + i), cfg)
-    after = (state["idr"], state["grid_coin"], state["hold_coin"])
-    assert before == after, f"decide() moved money: {before} -> {after}"
-    print("  ok  decide() never moves money itself (only engine.apply_fill does)")
+def test_halt_threshold():
+    slot = MomentumSlot(slot_id=1)
+    slot.balance = INITIAL_CAPITAL * HALT_THRESHOLD
+    assert slot.is_halted_by_loss
+    slot.balance = INITIAL_CAPITAL * HALT_THRESHOLD + 1
+    assert not slot.is_halted_by_loss
+    print("  ok  halt triggers at 40% loss")
 
-
-def test_profit_reserve_is_excluded_from_sizing():
-    cfg = make_cfg()
-    state = new_state(cfg)
-    state["bars_seen"] = 100
-    state["closes"] = [100.0] * cfg.momentum_trend_period
-    state["idr"] = 1_000_000
-    state["profit_reserve"] = 400_000
-
-    candle = make_candle(1_700_000_000, 200.0)  # clear entry signal
-    state["closes"].append(200.0)
-    actions = decide(state, candle, cfg)
-    assert actions and actions[0].side == "buy"
-    investable = state["idr"] - state["profit_reserve"]
-    assert actions[0].qty_idr <= investable * cfg.momentum_max_exposure + 1, (
-        f"spend {actions[0].qty_idr:,.0f} exceeds exposure cap on "
-        f"investable-minus-reserve ({investable:,.0f})"
-    )
-    print(f"  ok  sizing excludes the {state['profit_reserve']:,.0f} protected reserve")
-
-
-def test_never_holds_more_than_one_position():
-    import random
-    cfg = make_cfg()
-    random.seed(21)
-    price = 100.0
-    prices = []
-    for _ in range(500):
-        price *= (1.0 + random.uniform(-0.02, 0.02))
-        prices.append(max(price, 1.0))
-    state, fills = run_series(prices, cfg)
-    open_lots = 0
-    max_open = 0
-    for f in fills:
-        open_lots += 1 if f.side == "buy" else -1
-        max_open = max(max_open, open_lots)
-    assert max_open <= 1, f"held {max_open} positions at once"
-    assert state["idr"] >= -1e-6, f"cash went negative: {state['idr']}"
-    print(f"  ok  never more than one position across a 500-bar random walk ({len(fills)} fills)")
-
-
-def test_config_rejects_nonsense():
-    cases = [
-        ("exposure above 100%", dict(momentum_max_exposure=1.5)),
-        ("exposure zero", dict(momentum_max_exposure=0.0)),
-        ("trail pct zero", dict(momentum_trail_pct=0.0)),
-        ("trail pct >= 1.0", dict(momentum_trail_pct=1.0)),
-        ("history shorter than trend period", dict(history_window=100, momentum_trend_period=5000)),
-    ]
-    for label, overrides in cases:
-        cfg = Config()
-        for k, v in overrides.items():
-            setattr(cfg, k, v)
-        assert cfg.validate(), f"config accepted nonsense: {label} ({overrides})"
-    print(f"  ok  config rejects all {len(cases)} nonsense Momentum settings")
+def test_balance_pct():
+    slot = MomentumSlot(slot_id=1)
+    slot.balance = 1_200_000
+    assert abs(slot.balance_pct - 20.0) < 0.01
+    slot.balance = 800_000
+    assert abs(slot.balance_pct - (-20.0)) < 0.01
+    print("  ok  balance_pct tracks correctly")
 
 
 def main():
-    print("\nVerifying Unyil Momentum (bull-market specialist)")
-    print("-" * 62)
-    print(" distinctive behaviour:")
-    test_enters_fast_with_minimal_buffer()
-    test_survives_a_normal_pullback_that_would_shake_out_a_trend_exit()
-    test_trailing_stop_still_fires_on_a_genuine_reversal()
-    test_no_trend_break_rule_exists_at_all()
-    print(" safety carried over from Unyil 2.0 / Guardian:")
-    test_halt_blocks_new_entries_but_never_the_exit()
-    test_decide_never_moves_money()
-    test_profit_reserve_is_excluded_from_sizing()
-    test_never_holds_more_than_one_position()
-    test_config_rejects_nonsense()
-    print("-" * 62)
+    print("\nVerifying Unyil Momentum v3")
+    print("-" * 60)
+    print(" exit logic:")
+    test_hard_stop_fires(); test_hard_stop_silent_on_shallow()
+    test_breakeven_fires_after_rising(); test_breakeven_silent_without_rise()
+    test_trailing_fires(); test_trailing_silent_on_shallow()
+    test_hard_stop_priority(); test_peak_tracks(); test_empty_slot_no_exit()
+    print(" entry filters:")
+    test_qualifies_fully(); test_fails_below_13pct_gain()
+    test_fails_too_far_from_high(); test_passes_near_high()
+    test_excludes_portfolio_coins(); test_rejects_low_price()
+    test_rejects_low_volume(); test_loss_cooldown_blocks(); test_cooldown_expires()
+    print(" balance and halt:")
+    test_initial_balance(); test_halt_threshold(); test_balance_pct()
+    print("-" * 60)
     print("all passed\n")
-
 
 if __name__ == "__main__":
     main()

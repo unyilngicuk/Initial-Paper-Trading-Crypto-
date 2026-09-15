@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 from strategy_momentum import (
     COOLDOWN_HOURS, EXCLUDED_COINS, HALT_THRESHOLD, HARD_STOP_PCT,
-    INITIAL_CAPITAL, MAX_GAIN_10H_PCT, MIN_GAIN_24H_PCT,
+    INITIAL_CAPITAL, MAX_GAIN_5H_PCT, MIN_GAIN_24H_PCT,
     MIN_PRICE_IDR, MIN_VOL_IDR, ROUNDTRIP_FEE_PCT, TRAIL_PCT,
     MomentumSlot, check_exit, qualifies_for_entry,
 )
@@ -87,13 +87,13 @@ def fetch_current_price(coin):
         return None
 
 
-def fetch_price_10h_ago(coin):
+def fetch_price_5h_ago(coin):
     try:
         now_ts = int(time.time())
-        ts_10h = now_ts - 10 * 3600
+        ts_5h = now_ts - 5 * 3600
         url = (f"{INDODAX_BASE}/tradingview/history"
                f"?symbol={coin.upper()}_IDR&resolution=60"
-               f"&from={ts_10h - 3600}&to={ts_10h + 3600}")
+               f"&from={ts_5h - 3600}&to={ts_5h + 3600}")
         req = urllib.request.Request(url, headers={"User-Agent": UA})
         with urllib.request.urlopen(req, timeout=10) as r:
             data = json.loads(r.read().decode())
@@ -290,7 +290,7 @@ def main():
         while cand_idx < len(candidates) and not entered:
             candidate = candidates[cand_idx]
             cand_idx += 1
-            price_10h = fetch_price_10h_ago(candidate["coin"])
+            price_10h = fetch_price_5h_ago(candidate["coin"])
             handle_entry(slot, candidate, price_10h, path)
             entered = slot.is_occupied
     return 0

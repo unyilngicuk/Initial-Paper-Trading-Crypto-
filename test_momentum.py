@@ -6,7 +6,7 @@ import time
 from strategy_momentum import (
     MomentumSlot, check_exit, qualifies_for_entry,
     HARD_STOP_PCT, TRAIL_PCT, ROUNDTRIP_FEE_PCT,
-    MIN_GAIN_24H_PCT, MAX_GAIN_10H_PCT, EXCLUDED_COINS,
+    MIN_GAIN_24H_PCT, MAX_GAIN_5H_PCT, EXCLUDED_COINS,
     INITIAL_CAPITAL, HALT_THRESHOLD, MIN_PRICE_IDR,
     MIN_VOL_IDR, COOLDOWN_HOURS,
 )
@@ -87,7 +87,7 @@ def test_qualifies_basic():
     slot = MomentumSlot(slot_id=1)
     ok, reason = qualifies_for_entry("doge", 1150.0, 1000.0, 1060.0, 600_000_000, slot)
     assert ok, f"should qualify: {reason}"
-    print("  ok  coin with 15% 24h gain and <10% 10h gain qualifies")
+    print("  ok  coin with 15% 24h gain and <10% 5h gain qualifies")
 
 def test_fails_below_15pct():
     slot = MomentumSlot(slot_id=1)
@@ -99,13 +99,13 @@ def test_fails_fresh_spike():
     slot = MomentumSlot(slot_id=1)
     ok, reason = qualifies_for_entry("doge", 1150.0, 1000.0, 1026.0, 600_000_000, slot)
     assert not ok, f"should reject fresh spike: {reason}"
-    print("  ok  rejects fresh spike (>=10% in last 10h)")
+    print("  ok  rejects fresh spike (>=10% in last 5h)")
 
 def test_passes_sustained():
     slot = MomentumSlot(slot_id=1)
     ok, reason = qualifies_for_entry("doge", 1150.0, 1000.0, 1095.0, 600_000_000, slot)
     assert ok, f"should pass sustained move: {reason}"
-    print("  ok  accepts sustained move (<10% in last 10h)")
+    print("  ok  accepts sustained move (<10% in last 5h)")
 
 def test_excludes_portfolio_coins():
     slot = MomentumSlot(slot_id=1)

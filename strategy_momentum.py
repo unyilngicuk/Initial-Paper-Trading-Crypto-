@@ -18,13 +18,13 @@ HARD_STOP_PCT       = 0.03
 TRAIL_PCT           = 0.07
 ROUNDTRIP_FEE_PCT   = 0.0023
 MIN_GAIN_24H_PCT    = 0.15
-MAX_GAIN_10H_PCT    = 0.10
+MAX_GAIN_5H_PCT     = 0.10
 INITIAL_CAPITAL     = 1_000_000
 HALT_THRESHOLD      = 0.60
 EXCLUDED_COINS      = {"btc", "eth", "tslax", "googlx", "nvdax"}
-MIN_VOL_IDR         = 500_000_000
+MIN_VOL_IDR         = 300_000_000
 MIN_PRICE_IDR       = 1_000
-COOLDOWN_HOURS      = 24
+COOLDOWN_HOURS      = 12
 
 
 @dataclass
@@ -89,8 +89,8 @@ def qualifies_for_entry(coin, current_price, price_24h_ago, price_10h_ago, vol_i
         return False, f"24h gain {gain_24h:.1%} below {MIN_GAIN_24H_PCT:.0%}"
     if price_10h_ago and price_10h_ago > 0:
         gain_10h = (current_price - price_10h_ago) / price_10h_ago
-        if gain_10h >= MAX_GAIN_10H_PCT:
-            return False, f"10h gain {gain_10h:.1%} >= {MAX_GAIN_10H_PCT:.0%} (fresh spike)"
+        if gain_10h >= MAX_GAIN_5H_PCT:
+            return False, f"10h gain {gain_10h:.1%} >= {MAX_GAIN_5H_PCT:.0%} (fresh spike)"
     cooldown_expires = slot.loss_cooldown.get(coin_l, 0)
     if _time.time() < cooldown_expires:
         hours_left = (cooldown_expires - _time.time()) / 3600

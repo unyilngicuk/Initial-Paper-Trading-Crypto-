@@ -2,7 +2,7 @@ name: Paper trade - momentum altcoins
 
 on:
   schedule:
-    - cron: "*/15 * * * *"  # every 15 minutes -- same cadence as native crypto
+    - cron: "*/5 * * * *"  # every 5 minutes -- same cadence as native crypto
   workflow_dispatch: {}
 
 concurrency:

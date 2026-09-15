@@ -2,11 +2,11 @@
   "slot_id": 2,
   "coin": "stream",
   "entry_price": 264.0,
-  "peak_price": 264.0,
+  "peak_price": 276.0,
   "qty_coin": 3787.4583333333335,
   "idr": 0.0,
   "halted": false,
   "bars_seen": 0,
   "entry_ts": 1789464975,
-  "last_routine_notify_ts": 0.0
+  "last_routine_notify_ts": 1789466249.9854076
 }

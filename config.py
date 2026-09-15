@@ -122,6 +122,10 @@ class Config:
                                        # improved results in 3 of 4 real
                                        # quarters tested.
     stop_loss_pct: float = 0.15       # hard protective exit, independent of trend
+
+    # Optional trailing stop for Unyil 2.0 -- None means disabled (the
+    # default, preserving the original validated behavior exactly).
+    unyil2_trail_pct: Optional[float] = None
     base_risk_frac: float = 1.00      # fraction of investable cash deployed on entry
                                        # Was 0.90. Full commitment: this is still
                                        # SPOT ONLY -- no leverage, no borrowing, so

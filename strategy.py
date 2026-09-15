@@ -62,9 +62,15 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 
 from config import Config
-
-STRATEGY_FAMILY = "NATIVE_CRYPTO"
 from indicators import sma
+
+# Machine-readable family tag. Confirmed by real backtesting across BTC,
+# ETH (native, this family wins) and NVDAX/TSLAX/AAPLX (tokenized wrapper,
+# this whole family showed structural weakness -- see the spec's asset
+# generalization section). Used by backtest.py to warn on a family/asset
+# mismatch, and reserved for a future WRAPPER family to declare itself
+# against, once one exists.
+STRATEGY_FAMILY = "NATIVE_CRYPTO"
 
 
 @dataclass
@@ -87,6 +93,7 @@ class Lot:
     qty_coin: float
     entry_price: float
     entry_ts: int
+    peak_price: float = 0.0   # highest price seen since entry, for the optional trailing stop
 
     def target_price(self, cfg: Config) -> float:
         # Not used for exit logic here (trend/stop decide exits, not a fixed
@@ -284,13 +291,26 @@ def decide(state: Dict[str, Any], candle: Dict[str, Any], cfg: Config) -> List[A
         stop_price = lot.entry_price * (1.0 - effective_stop_pct)
         trend_break_price = trend * (1.0 - cfg.trend_buffer_pct)
 
+        if price > lot.peak_price:
+            lot.peak_price = price
+
         hit_stop = price <= stop_price
         hit_trend_break = price < trend_break_price
 
-        if hit_stop or hit_trend_break:
-            reason = "stop loss" if hit_stop else "trend break"
-            if hit_stop and state["stop_pct_override"] is not None:
-                reason = f"tightened stop loss ({effective_stop_pct:.0%})"
+        hit_trail = False
+        if cfg.unyil2_trail_pct is not None and lot.peak_price > 0:
+            trail_stop_price = lot.peak_price * (1.0 - cfg.unyil2_trail_pct)
+            hit_trail = price <= trail_stop_price
+
+        if hit_stop or hit_trend_break or hit_trail:
+            if hit_stop:
+                reason = "stop loss"
+                if state["stop_pct_override"] is not None:
+                    reason = f"tightened stop loss ({effective_stop_pct:.0%})"
+            elif hit_trail:
+                reason = f"trailing stop ({cfg.unyil2_trail_pct:.0%} from peak {lot.peak_price:.0f})"
+            else:
+                reason = "trend break"
             _record_trade_outcome(state, cfg, lot.entry_price, price, ts)
             actions.append(
                 Action(

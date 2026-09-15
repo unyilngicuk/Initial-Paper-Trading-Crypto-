@@ -132,6 +132,8 @@ def main() -> None:
                    help="override GAP's trailing stop width")
     p.add_argument("--gap-stop-pct", type=float, default=None,
                    help="override GAP's hard stop-loss")
+    p.add_argument("--unyil2-trail-pct", type=float, default=None,
+                   help="add an optional trailing stop to Unyil 2.0 (None=disabled, e.g. 0.10)")
     p.add_argument("--spacing", type=float)
     p.add_argument("--levels", type=int)
     p.add_argument("--venue", choices=list(Config.VENUES),
@@ -187,6 +189,8 @@ def main() -> None:
         cfg.gap_trail_pct = args.gap_trail_pct
     if args.gap_stop_pct is not None:
         cfg.gap_stop_pct = args.gap_stop_pct
+    if args.unyil2_trail_pct is not None:
+        cfg.unyil2_trail_pct = args.unyil2_trail_pct
     if args.spacing:
         cfg.spacing_pct = args.spacing
         cfg.take_profit_pct = args.spacing

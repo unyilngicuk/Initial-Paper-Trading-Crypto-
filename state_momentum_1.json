@@ -1,17 +1,16 @@
 {
   "slot_id": 1,
   "initial_capital": 1000000,
-  "balance": 422909.8075677684,
+  "balance": 1000000,
   "coin": null,
   "entry_price": 0.0,
   "peak_price": 0.0,
   "qty_coin": 0.0,
-  "trade_count": 1,
-  "total_pnl": -577090.1924322316,
-  "halted": true,
+  "trade_count": 0,
+  "total_pnl": 0.0,
+  "halted": false,
   "entry_ts": 0,
   "last_routine_notify_ts": 0.0,
-  "loss_cooldown": {
-    "l3": 1789532478.2371695
-  }
+  "loss_cooldown": {},
+  "deployed_capital": 0.0
 }

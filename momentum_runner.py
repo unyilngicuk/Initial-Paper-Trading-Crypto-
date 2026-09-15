@@ -191,11 +191,12 @@ def handle_exit(slot, current_price, path):
     reason, exit_type = check_exit(slot, current_price)
     if not exit_type:
         return False
-    invested = slot.balance
+    invested = slot.deployed_capital if slot.deployed_capital > 0 else slot.initial_capital
     proceeds = slot.qty_coin * current_price * (1.0 - ROUNDTRIP_FEE_PCT)
     trade_pnl = proceeds - invested
     trade_pnl_pct = (trade_pnl / invested * 100) if invested > 0 else 0.0
     slot.balance = proceeds
+    slot.deployed_capital = 0.0
     slot.total_pnl += trade_pnl
     slot.trade_count += 1
     overall_pct = slot.balance_pct
@@ -242,10 +243,12 @@ def handle_entry(slot, candidate, path):
     high_str = f" | 13h high: Rp {high_13h:,.0f}" if high_13h else ""
     investable = slot.balance * (1.0 - 0.000111)
     qty = investable / current_price
+    slot.deployed_capital = slot.balance  # record what we invested
     slot.coin = coin
     slot.entry_price = current_price
     slot.peak_price = current_price
     slot.qty_coin = qty
+    slot.balance = 0.0  # capital is now deployed, not in cash
     slot.entry_ts = int(time.time())
     save_slot(slot, path)
     notify(
@@ -278,7 +281,8 @@ def main():
             notify(f"[MOMENTUM slot {slot.slot_id}] Price fetch failed for {slot.coin.upper()}.")
             continue
         equity = slot.qty_coin * current_price
-        trade_pct = (equity - slot.balance) / slot.balance * 100 if slot.balance > 0 else 0.0
+        deployed = slot.deployed_capital if slot.deployed_capital > 0 else slot.initial_capital
+        trade_pct = (equity - deployed) / deployed * 100 if deployed > 0 else 0.0
         exited = handle_exit(slot, current_price, path)
         if not exited:
             notify_throttled(slot,

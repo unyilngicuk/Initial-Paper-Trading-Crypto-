@@ -28,6 +28,7 @@ class MomentumSlot:
     total_pnl: float = 0.0
     halted: bool = False
     entry_ts: int = 0
+    deployed_capital: float = 0.0  # exact amount invested at entry
     last_routine_notify_ts: float = 0.0
     loss_cooldown: dict = field(default_factory=dict)
 

@@ -146,7 +146,7 @@ def scan_market(summaries, already_held):
         f"  passed all pre-filters:    {rejected['passed_all']} "
         f"(10h check happens at entry)",
         f"  top candidates: "
-        f"{', '.join(c['coin'].upper() + ' (' + f"{c['gain_24h_pct']:.0%}" + ')' for c in candidates[:5]) or 'none'}",
+        f"  top candidates: {', '.join(c['coin'].upper() + ' (' + '{:.0%}'.format(c['gain_24h_pct']) + ')' for c in candidates[:5]) or 'none'}",
     ]
     for line in log_lines:
         print(line, flush=True)

@@ -56,6 +56,7 @@ def load_slot(path, slot_id):
     d.setdefault("trade_count", 0)
     d.setdefault("total_pnl", 0.0)
     d.setdefault("loss_cooldown", {})
+    d.setdefault('deployed_capital', 0.0)
     for old in ["idr", "bars_seen", "lots", "principal", "profit_reserve",
                 "anchor", "_pending_anchor", "closes", "strategy_name"]:
         d.pop(old, None)

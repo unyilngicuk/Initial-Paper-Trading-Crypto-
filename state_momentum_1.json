@@ -1,12 +1,12 @@
 {
   "slot_id": 1,
-  "coin": "amznx",
-  "entry_price": 5389983.0,
-  "peak_price": 5389983.0,
-  "qty_coin": 0.18285302731192113,
+  "coin": "stream",
+  "entry_price": 275.0,
+  "peak_price": 275.0,
+  "qty_coin": 3049.5634362423525,
   "idr": 0.0,
   "halted": false,
   "bars_seen": 0,
-  "entry_ts": 1789467176,
+  "entry_ts": 1789468215,
   "last_routine_notify_ts": 1789466248.3813748
 }

@@ -1,0 +1,45 @@
+name: Paper trade - momentum altcoins
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"  # every 15 minutes -- same cadence as native crypto
+  workflow_dispatch: {}
+
+concurrency:
+  group: paper-trade-momentum
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  scan-and-trade:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run momentum scanner and position manager
+        env:
+          SLOT_1_STATE_PATH: state_momentum_1.json
+          SLOT_2_STATE_PATH: state_momentum_2.json
+          EXECUTE: "false"
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python3 momentum_runner.py
+
+      - name: Commit updated momentum state back to repo
+        run: |
+          git config user.name "paper-trading-bot"
+          git config user.email "actions@github.com"
+          git add state_momentum_1.json state_momentum_2.json
+          git diff --staged --quiet || git commit -m "state: momentum tick [skip ci]"
+
+          for attempt in 1 2 3 4 5; do
+            git pull --rebase --autostash && git push && break
+            echo "Push attempt $attempt failed -- retrying..."
+            sleep $((RANDOM % 5 + 2))
+          done

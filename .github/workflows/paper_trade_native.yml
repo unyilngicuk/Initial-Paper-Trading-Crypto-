@@ -34,7 +34,7 @@ jobs:
         env:
           COIN: ${{ matrix.coin }}
           STATE_PATH: state_${{ matrix.coin }}.json
-          STARTING_IDR: "250000"
+          STARTING_IDR: "1000000"   # Rp 1,000,000 per native coin
           UNYIL2_TRAIL_PCT: "0.10"   # 10% trailing stop -- see spec Section 11m
           EXECUTE: "false"
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}

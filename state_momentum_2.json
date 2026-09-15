@@ -10,7 +10,7 @@
   "total_pnl": -124962.45767963026,
   "halted": false,
   "entry_ts": 1789492558,
-  "last_routine_notify_ts": 0.0,
+  "last_routine_notify_ts": 1789492596.7806833,
   "loss_cooldown": {
     "puffer": 1789532479.7988095
   }

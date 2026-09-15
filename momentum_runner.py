@@ -258,7 +258,7 @@ def handle_entry(slot, candidate, path):
         f"24h: {candidate['gain_24h_pct']:.1%}{gain_13h_str}{high_str}\n"
         f"Entry: Rp {current_price:,.0f} | Vol: Rp {candidate['vol_idr']/1e6:.0f}M\n"
         f"Qty: {qty:.4f} {coin.upper()}\n"
-        f"Capital: Rp {slot.balance:,.0f} ({slot.balance_pct:+.1f}%)\n"
+        f"Capital: Rp {slot.deployed_capital:,.0f} (slot running: {slot.balance_pct:+.1f}%)\n"
         f"Exits: hard {HARD_STOP_PCT:.0%} | breakeven | trail {TRAIL_PCT:.0%}"
     )
 

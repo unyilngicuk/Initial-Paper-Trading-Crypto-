@@ -1,12 +1,12 @@
 {
   "slot_id": 2,
-  "coin": "puffer",
-  "entry_price": 434.0,
-  "peak_price": 439.0,
-  "qty_coin": 2394.1016774497452,
+  "coin": "show",
+  "entry_price": 61990.0,
+  "peak_price": 61990.0,
+  "qty_coin": 16.643952368324815,
   "idr": 0.0,
   "halted": false,
   "bars_seen": 0,
-  "entry_ts": 1789468215,
+  "entry_ts": 1789471631,
   "last_routine_notify_ts": 1789466249.9854076
 }

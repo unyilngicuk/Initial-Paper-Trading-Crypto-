@@ -10,7 +10,7 @@
   "total_pnl": 0.0,
   "halted": false,
   "entry_ts": 0,
-  "last_routine_notify_ts": 0.0,
-  "loss_cooldown": {},
-  "deployed_capital": 0.0
+  "deployed_capital": 0.0,
+  "last_routine_notify_ts": 1789493582.989102,
+  "loss_cooldown": {}
 }

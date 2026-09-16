@@ -1,16 +1,16 @@
 {
   "slot_id": 2,
   "initial_capital": 1000000,
-  "balance": 0.0,
-  "coin": "high",
-  "entry_price": 682.0,
-  "peak_price": 682.0,
-  "qty_coin": 2276.4690311813424,
-  "trade_count": 14,
-  "total_pnl": 877053.5031180521,
+  "balance": 1483115.2485234854,
+  "coin": null,
+  "entry_price": 0.0,
+  "peak_price": 0.0,
+  "qty_coin": 0.0,
+  "trade_count": 15,
+  "total_pnl": 807444.5199861482,
   "halted": false,
-  "entry_ts": 1789580097,
-  "deployed_capital": 1552724.2316553893,
+  "entry_ts": 0,
+  "deployed_capital": 0.0,
   "profit_reserve": 0.0,
   "last_routine_notify_ts": 1789573141.5795808,
   "loss_cooldown": {
@@ -24,6 +24,7 @@
     "skyai": 1789599718.3193443,
     "manta": 1789601805.218112,
     "br": 1789625180.5373666,
-    "cow": 1789626890.834727
+    "cow": 1789626890.834727,
+    "high": 1789627640.1097302
   }
 }

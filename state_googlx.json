@@ -5,7 +5,6 @@
   "hold_bought": false,
   "closes": [
     6147985.0,
-    6147985.0,
     6145978.0,
     6145990.0,
     5889560.0,
@@ -340,14 +339,15 @@
     5913170.0,
     6010000.0,
     6010000.0,
-    5914679.0
+    5915254.0,
+    5915713.0
   ],
   "lots": [],
   "next_lot_id": 1,
   "anchor": null,
   "peak_equity": 500000.0,
   "halted": false,
-  "bars_seen": 357,
+  "bars_seen": 358,
   "trade_history": [],
   "strategy_name": "gap",
   "principal": 500000.0,
@@ -359,5 +359,5 @@
   "high_water_price": null,
   "ema": null,
   "true_max_dd": 0.0,
-  "last_routine_notify_ts": 1789528639.7781022
+  "last_routine_notify_ts": 1789539769.9826698
 }

@@ -2,7 +2,7 @@ import time
 from strategy_momentum import (
     MomentumSlot, check_exit, qualifies_for_entry,
     HARD_STOP_PCT, TRAIL_PCT, ROUNDTRIP_FEE_PCT,
-    MIN_GAIN_13H_PCT, MAX_DROP_FROM_13H_HIGH, EXCLUDED_COINS,
+    MIN_GAIN_21H_PCT, MAX_DROP_FROM_13H_HIGH, EXCLUDED_COINS,
     INITIAL_CAPITAL, HALT_THRESHOLD, MIN_PRICE_IDR,
     MIN_VOL_IDR, COOLDOWN_HOURS,
 )

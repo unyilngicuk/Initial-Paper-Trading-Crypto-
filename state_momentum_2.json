@@ -2,21 +2,23 @@
   "slot_id": 2,
   "initial_capital": 1000000,
   "balance": 0.0,
-  "coin": "lsk",
-  "entry_price": 5565.0,
-  "peak_price": 5816.0,
-  "qty_coin": 258.3677454879599,
-  "trade_count": 7,
-  "total_pnl": 437976.11898970464,
+  "coin": "apex",
+  "entry_price": 24850.0,
+  "peak_price": 24850.0,
+  "qty_coin": 57.89665827769118,
+  "trade_count": 8,
+  "total_pnl": 438891.6751765704,
   "halted": false,
-  "entry_ts": 1789548676,
-  "deployed_capital": 1437976.1189897046,
+  "entry_ts": 1789550492,
+  "deployed_capital": 1438891.6751765704,
+  "profit_reserve": 0.0,
   "last_routine_notify_ts": 1789549394.9773104,
   "loss_cooldown": {
     "show": 1789568935.9476104,
     "arb": 1789577137.8690135,
     "puffer": 1789578922.058121,
     "useless": 1789585064.6708744,
-    "syn": 1789595472.6668494
+    "syn": 1789595472.6668494,
+    "lsk": 1789597287.8913896
   }
 }

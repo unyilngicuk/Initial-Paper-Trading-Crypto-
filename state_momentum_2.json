@@ -2,15 +2,15 @@
   "slot_id": 2,
   "initial_capital": 1000000,
   "balance": 0.0,
-  "coin": "br",
-  "entry_price": 9583.0,
-  "peak_price": 10951.0,
-  "qty_coin": 150.55445364244468,
-  "trade_count": 12,
-  "total_pnl": 767252.7652260179,
+  "coin": "cow",
+  "entry_price": 3570.0,
+  "peak_price": 3570.0,
+  "qty_coin": 437.53267647875447,
+  "trade_count": 13,
+  "total_pnl": 886494.3268129602,
   "halted": false,
-  "entry_ts": 1789566672,
-  "deployed_capital": 1442923.493763355,
+  "entry_ts": 1789578386,
+  "deployed_capital": 1562165.0553502974,
   "profit_reserve": 0.0,
   "last_routine_notify_ts": 1789573141.5795808,
   "loss_cooldown": {
@@ -22,6 +22,7 @@
     "lsk": 1789597287.8913896,
     "apex": 1789598190.8619745,
     "skyai": 1789599718.3193443,
-    "manta": 1789601805.218112
+    "manta": 1789601805.218112,
+    "br": 1789625180.5373666
   }
 }

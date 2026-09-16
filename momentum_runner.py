@@ -202,8 +202,12 @@ def handle_exit(slot, current_price, path):
     slot.trade_count += 1
     overall_pct = slot.balance_pct
     coin = slot.coin
-    if trade_pnl < 0:
+    profit_pct = trade_pnl / invested if invested > 0 else 0.0
+    if profit_pct < 0.13:  # cooldown unless profit >= 13%
         slot.loss_cooldown[coin] = time.time() + COOLDOWN_HOURS * 3600
+        print(f"[COOLDOWN] {coin}: {profit_pct:.1%} profit -- cooldown applied for {COOLDOWN_HOURS}h", flush=True)
+    else:
+        print(f"[NO COOLDOWN] {coin}: {profit_pct:.1%} profit -- re-entry allowed immediately", flush=True)
     slot.coin = None
     slot.qty_coin = 0.0
     slot.entry_price = 0.0

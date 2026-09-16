@@ -57,6 +57,7 @@ def load_slot(path, slot_id):
     d.setdefault("total_pnl", 0.0)
     d.setdefault("loss_cooldown", {})
     d.setdefault('deployed_capital', 0.0)
+    d.setdefault('profit_reserve', 0.0)
     for old in ["idr", "bars_seen", "lots", "principal", "profit_reserve",
                 "anchor", "_pending_anchor", "closes", "strategy_name"]:
         d.pop(old, None)
@@ -196,7 +197,18 @@ def handle_exit(slot, current_price, path):
     proceeds = slot.qty_coin * current_price * (1.0 - ROUNDTRIP_FEE_PCT)
     trade_pnl = proceeds - invested
     trade_pnl_pct = (trade_pnl / invested * 100) if invested > 0 else 0.0
-    slot.balance = proceeds
+    # Profit reserve sweep:
+    # - Only when proceeds restore or exceed the original Rp 1,000,000
+    # - Only when trade profit >= 20% of deployed capital
+    # - Sweep 50% of profit to reserve; rest becomes new balance
+    PROFIT_SWEEP_THRESHOLD = 0.20
+    swept = 0.0
+    if proceeds >= slot.initial_capital and trade_pnl_pct / 100 >= PROFIT_SWEEP_THRESHOLD:
+        swept = trade_pnl * 0.50
+        slot.profit_reserve += swept
+        slot.balance = proceeds - swept
+    else:
+        slot.balance = proceeds
     slot.deployed_capital = 0.0
     slot.total_pnl += trade_pnl
     slot.trade_count += 1
@@ -220,12 +232,18 @@ def handle_exit(slot, current_price, path):
         f"\nSLOT HALTED: balance Rp {slot.balance:,.0f} ({overall_pct:+.1f}%) -- 40% loss reached."
         if slot.halted else ""
     )
+    reserve_line = (
+        f"\nPROFIT PROTECTED: Rp {swept:,.0f} swept to reserve "
+        f"(total reserve: Rp {slot.profit_reserve:,.0f})"
+        if swept > 0 else ""
+    )
     notify(
         f"[MOMENTUM slot {slot.slot_id}] EXIT -- {coin.upper()}\n"
         f"Reason: {reason}\n"
         f"Trade P&L: Rp {trade_pnl:+,.0f} ({trade_pnl_pct:+.2f}%)\n"
         f"Slot balance: Rp {slot.balance:,.0f} ({overall_pct:+.2f}% from start)\n"
-        f"Total P&L: Rp {slot.total_pnl:+,.0f}{halt_warning}"
+        f"Total P&L: Rp {slot.total_pnl:+,.0f}"
+        f"{reserve_line}{halt_warning}"
     )
     return True
 
@@ -290,12 +308,13 @@ def main():
         trade_pct = (equity - deployed) / deployed * 100 if deployed > 0 else 0.0
         exited = handle_exit(slot, current_price, path)
         if not exited:
+            reserve_str = f" | Reserve: Rp {slot.profit_reserve:,.0f}" if slot.profit_reserve > 0 else ""
             notify_throttled(slot,
                 f"[MOMENTUM slot {slot.slot_id}] Check-in\n"
                 f"Coin: {slot.coin.upper()}\n"
                 f"Price: Rp {current_price:,.0f}\n"
                 f"Trade: Rp {equity:,.0f} ({trade_pct:+.2f}%) | Peak: Rp {slot.peak_price:,.0f}\n"
-                f"Slot from start: {slot.balance_pct:+.2f}%\n"
+                f"Slot from start: {slot.balance_pct:+.2f}%{reserve_str}\n"
                 f"Action: holding")
             save_slot(slot, path)
     candidates = scan_market(summaries,

@@ -29,6 +29,7 @@ class MomentumSlot:
     halted: bool = False
     entry_ts: int = 0
     deployed_capital: float = 0.0  # exact amount invested at entry
+    profit_reserve: float = 0.0    # realized profit swept to reserve, never re-risked
     last_routine_notify_ts: float = 0.0
     loss_cooldown: dict = field(default_factory=dict)
 

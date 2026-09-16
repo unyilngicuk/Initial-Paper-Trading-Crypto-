@@ -2,19 +2,20 @@
   "slot_id": 2,
   "initial_capital": 1000000,
   "balance": 0.0,
-  "coin": "useless",
-  "entry_price": 4000.0,
-  "peak_price": 4033.0,
-  "qty_coin": 250.5777995093193,
-  "trade_count": 4,
-  "total_pnl": 2422.4669311065227,
+  "coin": "syn",
+  "entry_price": 2009.0,
+  "peak_price": 2009.0,
+  "qty_coin": 485.6383428319355,
+  "trade_count": 5,
+  "total_pnl": -24244.260363541893,
   "halted": false,
-  "entry_ts": 1789532125,
-  "deployed_capital": 1002422.4669311065,
+  "entry_ts": 1789538266,
+  "deployed_capital": 975755.7396364581,
   "last_routine_notify_ts": 1789533114.3563764,
   "loss_cooldown": {
     "show": 1789568935.9476104,
     "arb": 1789577137.8690135,
-    "puffer": 1789578922.058121
+    "puffer": 1789578922.058121,
+    "useless": 1789585064.6708744
   }
 }

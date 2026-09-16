@@ -4,13 +4,13 @@
   "balance": 0.0,
   "coin": "puffer",
   "entry_price": 480.0,
-  "peak_price": 490.0,
+  "peak_price": 492.0,
   "qty_coin": 2475.132811148044,
   "trade_count": 1,
   "total_pnl": 188195.63906699745,
   "halted": false,
   "entry_ts": 1789523012,
   "deployed_capital": 1188195.6390669974,
-  "last_routine_notify_ts": 1789517854.5267403,
+  "last_routine_notify_ts": 1789525711.9245098,
   "loss_cooldown": {}
 }

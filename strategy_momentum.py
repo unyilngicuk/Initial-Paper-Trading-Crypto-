@@ -38,6 +38,10 @@ class MomentumSlot:
 
     @property
     def is_halted_by_loss(self):
+        # Only check halt when not in a position -- while deployed,
+        # balance is 0 which would falsely trigger the 40% loss check.
+        if self.is_occupied:
+            return False
         return self.balance <= self.initial_capital * HALT_THRESHOLD
 
     @property

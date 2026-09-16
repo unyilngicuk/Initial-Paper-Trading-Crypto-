@@ -11,7 +11,7 @@
   "halted": false,
   "entry_ts": 1789566672,
   "deployed_capital": 1442923.493763355,
-  "profit_reserve": 324329.27146266296,
+  "profit_reserve": 0.0,
   "last_routine_notify_ts": 1789565740.1538217,
   "loss_cooldown": {
     "show": 1789568935.9476104,

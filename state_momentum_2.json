@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "br",
   "entry_price": 6051.0,
-  "peak_price": 6664.0,
+  "peak_price": 8940.0,
   "qty_coin": 184.8405318694458,
   "trade_count": 11,
   "total_pnl": 118594.222300692,
@@ -12,7 +12,7 @@
   "entry_ts": 1789555006,
   "deployed_capital": 1118594.222300692,
   "profit_reserve": 0.0,
-  "last_routine_notify_ts": 1789549394.9773104,
+  "last_routine_notify_ts": 1789557638.577568,
   "loss_cooldown": {
     "show": 1789568935.9476104,
     "arb": 1789577137.8690135,

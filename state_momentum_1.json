@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "lighter",
   "entry_price": 87000.0,
-  "peak_price": 87000.0,
+  "peak_price": 87900.0,
   "qty_coin": 12.312380377816666,
   "trade_count": 16,
   "total_pnl": 71296.0067267965,
@@ -12,7 +12,7 @@
   "entry_ts": 1789633253,
   "deployed_capital": 1071296.0067267965,
   "profit_reserve": 0.0,
-  "last_routine_notify_ts": 1789626161.8978012,
+  "last_routine_notify_ts": 1789634145.734074,
   "loss_cooldown": {
     "puffer": 1789574192.6646125,
     "lsk": 1789660076.3642325,

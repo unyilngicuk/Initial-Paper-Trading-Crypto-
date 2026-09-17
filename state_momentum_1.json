@@ -2,19 +2,20 @@
   "slot_id": 1,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "genius",
-  "entry_price": 6248.0,
-  "peak_price": 6420.0,
-  "qty_coin": 392.05659274556143,
-  "trade_count": 2,
-  "total_pnl": -50158.476116581354,
+  "coin": "aih",
+  "entry_price": 15008.0,
+  "peak_price": 15008.0,
+  "qty_coin": 159.48840882743204,
+  "trade_count": 3,
+  "total_pnl": -106132.24099665042,
   "profit_reserve": 0.0,
-  "deployed_capital": 2449841.5238834186,
+  "deployed_capital": 2393867.7590033496,
   "halted": false,
-  "entry_ts": 1789674984,
+  "entry_ts": 1789678511,
   "last_routine_notify_ts": 1789677992.093837,
   "loss_cooldown": {
     "near": 1789707454.4189098,
-    "useless": 1789721781.4878664
+    "useless": 1789721781.4878664,
+    "genius": 1789725306.5403407
   }
 }

@@ -2,15 +2,15 @@
   "slot_id": 1,
   "initial_capital": 1000000,
   "balance": 0.0,
-  "coin": "skyai",
-  "entry_price": 1073.0,
-  "peak_price": 1083.0,
-  "qty_coin": 1207.5775292946723,
-  "trade_count": 8,
-  "total_pnl": 295874.53100612503,
+  "coin": "lsk",
+  "entry_price": 6096.0,
+  "peak_price": 6096.0,
+  "qty_coin": 212.04183284813166,
+  "trade_count": 9,
+  "total_pnl": 292750.50834863726,
   "halted": false,
-  "entry_ts": 1789602826,
-  "deployed_capital": 1295874.531006125,
+  "entry_ts": 1789608914,
+  "deployed_capital": 1292750.5083486373,
   "profit_reserve": 0.0,
   "last_routine_notify_ts": 1789603816.1205487,
   "loss_cooldown": {
@@ -19,6 +19,7 @@
     "syn": 1789649622.416846,
     "arb": 1789581478.780465,
     "conx": 1789641793.6873162,
-    "br": 1789643302.8396482
+    "br": 1789643302.8396482,
+    "skyai": 1789655708.7662077
   }
 }

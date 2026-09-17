@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "ondo",
   "entry_price": 6554.0,
-  "peak_price": 6591.0,
+  "peak_price": 6600.0,
   "qty_coin": 374.20561356058437,
   "trade_count": 1,
   "total_pnl": -47184.14616415417,
@@ -12,7 +12,7 @@
   "deployed_capital": 2452815.853835846,
   "halted": false,
   "entry_ts": 1789660659,
-  "last_routine_notify_ts": 1789662480.863663,
+  "last_routine_notify_ts": 1789666098.5522952,
   "loss_cooldown": {
     "genius": 1789707455.8788068
   }

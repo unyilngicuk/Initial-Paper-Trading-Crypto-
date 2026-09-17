@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "useless",
   "entry_price": 4468.0,
-  "peak_price": 4475.0,
+  "peak_price": 4533.0,
   "qty_coin": 557.3057532741599,
   "trade_count": 1,
   "total_pnl": -9681.469014114235,
@@ -12,7 +12,7 @@
   "deployed_capital": 2490318.5309858858,
   "halted": false,
   "entry_ts": 1789660658,
-  "last_routine_notify_ts": 1789658615.5220644,
+  "last_routine_notify_ts": 1789662479.5183184,
   "loss_cooldown": {
     "near": 1789707454.4189098
   }

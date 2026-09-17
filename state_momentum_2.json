@@ -2,16 +2,18 @@
   "slot_id": 2,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "genius",
-  "entry_price": 6302.0,
-  "peak_price": 6400.0,
-  "qty_coin": 396.65542684861947,
-  "trade_count": 0,
-  "total_pnl": 0.0,
+  "coin": "ondo",
+  "entry_price": 6554.0,
+  "peak_price": 6554.0,
+  "qty_coin": 374.20561356058437,
+  "trade_count": 1,
+  "total_pnl": -47184.14616415417,
   "profit_reserve": 0.0,
-  "deployed_capital": 2500000,
+  "deployed_capital": 2452815.853835846,
   "halted": false,
-  "entry_ts": 1789658504,
+  "entry_ts": 1789660659,
   "last_routine_notify_ts": 1789658616.9505303,
-  "loss_cooldown": {}
+  "loss_cooldown": {
+    "genius": 1789707455.8788068
+  }
 }

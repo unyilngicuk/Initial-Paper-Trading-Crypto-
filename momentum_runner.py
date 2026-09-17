@@ -4,8 +4,10 @@ from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Tuple
 from strategy_momentum import (
     COOLDOWN_HOURS, EXCLUDED_COINS, HALT_THRESHOLD, HARD_STOP_PCT,
-    INITIAL_CAPITAL, MAX_DROP_FROM_13H_HIGH, MIN_GAIN_21H_PCT,
-    MIN_PRICE_IDR, MIN_VOL_IDR, ROUNDTRIP_FEE_PCT, TRAIL_PCT,
+    INITIAL_CAPITAL, MAX_DROP_FROM_21H_HIGH, MIN_GAIN_21H_PCT,
+    MIN_PRICE_IDR, MIN_VOL_IDR, PROFIT_COOLDOWN_EXEMPT,
+    PROFIT_SWEEP_PCT, PROFIT_SWEEP_THRESHOLD, PROTECTION_THRESHOLD,
+    ROUNDTRIP_FEE_PCT, TRAIL_PCT,
     MomentumSlot, check_exit, qualifies_for_entry,
 )
 
@@ -16,7 +18,8 @@ SLOT_STATE_PATHS = [
 INDODAX_BASE = "https://indodax.com"
 UA = "unyil-momentum/1.0"
 PAPER_TRADING_ONLY = True
-ROUTINE_NOTIFY_THROTTLE_SECONDS = int(os.environ.get("ROUTINE_NOTIFY_THROTTLE_SECONDS", 2*3600))
+ROUTINE_NOTIFY_THROTTLE_SECONDS = int(os.environ.get("ROUTINE_NOTIFY_THROTTLE_SECONDS", 3600))
+SEP = "\u2500" * 28
 
 
 def notify(message):
@@ -55,11 +58,11 @@ def load_slot(path, slot_id):
         d["balance"] = INITIAL_CAPITAL
     d.setdefault("trade_count", 0)
     d.setdefault("total_pnl", 0.0)
+    d.setdefault("profit_reserve", 0.0)
     d.setdefault("loss_cooldown", {})
-    d.setdefault('deployed_capital', 0.0)
-    d.setdefault('profit_reserve', 0.0)
-    for old in ["idr", "bars_seen", "lots", "principal", "profit_reserve",
-                "anchor", "_pending_anchor", "closes", "strategy_name"]:
+    d.setdefault("deployed_capital", 0.0)
+    for old in ["idr", "bars_seen", "lots", "principal", "anchor",
+                "_pending_anchor", "closes", "strategy_name"]:
         d.pop(old, None)
     return MomentumSlot(**d)
 
@@ -90,17 +93,10 @@ def fetch_current_price(coin):
         return None
 
 
-def fetch_13h_data(coin):
-    """
-    Returns (price_13h_ago, high_13h) from 1-hour candles.
-    Falls back to None, None if the endpoint returns empty or errors --
-    qualifies_for_entry handles this gracefully by skipping the 13h
-    gain check and only applying the near-high filter when data exists.
-    The TradingView endpoint is unreliable for newer/smaller altcoins.
-    """
+def fetch_21h_data(coin):
     try:
         now_ts = int(time.time())
-        from_ts = now_ts - 14 * 3600
+        from_ts = now_ts - 22 * 3600
         url = (f"{INDODAX_BASE}/tradingview/history"
                f"?symbol={coin.upper()}_IDR&resolution=60"
                f"&from={from_ts}&to={now_ts}")
@@ -108,19 +104,18 @@ def fetch_13h_data(coin):
         with urllib.request.urlopen(req, timeout=10) as r:
             raw = r.read().decode().strip()
         if not raw:
-            print(f"[WARN] 13h fetch: empty response for {coin}", flush=True)
             return None, None
         data = json.loads(raw)
         closes = data.get("c", [])
         highs = data.get("h", [])
         if not closes:
             return None, None
-        price_13h_ago = float(closes[-13]) if len(closes) >= 13 else float(closes[0])
-        recent_highs = highs[-13:] if highs else []
-        high_13h = max(float(h) for h in recent_highs) if recent_highs else None
-        return price_13h_ago, high_13h
+        price_21h_ago = float(closes[-21]) if len(closes) >= 21 else float(closes[0])
+        recent_highs = highs[-21:] if highs else []
+        high_21h = max(float(h) for h in recent_highs) if recent_highs else None
+        return price_21h_ago, high_21h
     except Exception as e:
-        print(f"[WARN] 13h fetch failed for {coin}: {e}", flush=True)
+        print(f"[WARN] 21h fetch failed for {coin}: {e}", flush=True)
         return None, None
 
 
@@ -178,7 +173,7 @@ def scan_market(summaries, already_held, slots):
         f"  below Rp{MIN_PRICE_IDR:,.0f}/coin:   {rejected['below_min_price']}",
         f"  below Rp{MIN_VOL_IDR//1_000_000}M volume: {rejected['below_min_volume']}",
         f"  below {MIN_GAIN_21H_PCT:.0%} 24h gain: {rejected['below_gain_threshold']}",
-        f"  passed pre-filter: {rejected['passed_prefilter']} (13h+near-high checked at entry)",
+        f"  passed pre-filter: {rejected['passed_prefilter']}",
         f"  top: {top_str}",
     ]
     for line in log_lines:
@@ -197,14 +192,9 @@ def handle_exit(slot, current_price, path):
     proceeds = slot.qty_coin * current_price * (1.0 - ROUNDTRIP_FEE_PCT)
     trade_pnl = proceeds - invested
     trade_pnl_pct = (trade_pnl / invested * 100) if invested > 0 else 0.0
-    # Profit reserve sweep:
-    # - Only when proceeds restore or exceed the original Rp 1,000,000
-    # - Only when trade profit >= 20% of deployed capital
-    # - Sweep 50% of profit to reserve; rest becomes new balance
-    PROFIT_SWEEP_THRESHOLD = 0.20
     swept = 0.0
-    if proceeds >= slot.initial_capital and trade_pnl_pct / 100 >= PROFIT_SWEEP_THRESHOLD:
-        swept = trade_pnl * 0.50
+    if proceeds >= PROTECTION_THRESHOLD and trade_pnl_pct / 100 >= PROFIT_SWEEP_THRESHOLD:
+        swept = trade_pnl * PROFIT_SWEEP_PCT
         slot.profit_reserve += swept
         slot.balance = proceeds - swept
     else:
@@ -213,13 +203,14 @@ def handle_exit(slot, current_price, path):
     slot.total_pnl += trade_pnl
     slot.trade_count += 1
     overall_pct = slot.balance_pct
+    total_value = slot.balance + slot.profit_reserve
     coin = slot.coin
     profit_pct = trade_pnl / invested if invested > 0 else 0.0
-    if profit_pct < 0.13:  # cooldown unless profit >= 13%
+    if profit_pct < PROFIT_COOLDOWN_EXEMPT:
         slot.loss_cooldown[coin] = time.time() + COOLDOWN_HOURS * 3600
-        print(f"[COOLDOWN] {coin}: {profit_pct:.1%} profit -- cooldown applied for {COOLDOWN_HOURS}h", flush=True)
+        print(f"[COOLDOWN] {coin}: {profit_pct:.1%} -- cooldown {COOLDOWN_HOURS}h", flush=True)
     else:
-        print(f"[NO COOLDOWN] {coin}: {profit_pct:.1%} profit -- re-entry allowed immediately", flush=True)
+        print(f"[NO COOLDOWN] {coin}: {profit_pct:.1%} -- re-entry allowed", flush=True)
     slot.coin = None
     slot.qty_coin = 0.0
     slot.entry_price = 0.0
@@ -228,59 +219,59 @@ def handle_exit(slot, current_price, path):
     if slot.is_halted_by_loss:
         slot.halted = True
     save_slot(slot, path)
-    halt_warning = (
-        f"\nSLOT HALTED: balance Rp {slot.balance:,.0f} ({overall_pct:+.1f}%) -- 40% loss reached."
-        if slot.halted else ""
-    )
-    reserve_line = (
-        f"\nPROFIT PROTECTED: Rp {swept:,.0f} swept to reserve "
-        f"(total reserve: Rp {slot.profit_reserve:,.0f})"
-        if swept > 0 else ""
-    )
+    swept_line = (f"\nReserve this trade: Rp {swept:,.0f}\nTotal reserve: Rp {slot.profit_reserve:,.0f}"
+                  if swept > 0 else "")
+    halt_warning = (f"\nSLOT HALTED: balance Rp {slot.balance:,.0f} -- 40% loss reached."
+                    if slot.halted else "")
     notify(
         f"[MOMENTUM slot {slot.slot_id}] EXIT -- {coin.upper()}\n"
         f"Reason: {reason}\n"
         f"Trade P&L: Rp {trade_pnl:+,.0f} ({trade_pnl_pct:+.2f}%)\n"
-        f"Slot balance: Rp {slot.balance:,.0f} ({overall_pct:+.2f}% from start)\n"
-        f"Total P&L: Rp {slot.total_pnl:+,.0f}"
-        f"{reserve_line}{halt_warning}"
+        f"{SEP}\n"
+        f"Balance: Rp {slot.balance:,.0f}\n"
+        f"Total reserve: Rp {slot.profit_reserve:,.0f}"
+        f"{swept_line}\n"
+        f"Total value: Rp {total_value:,.0f} ({overall_pct:+.2f}% from start)\n"
+        f"All-time P&L: Rp {slot.total_pnl:+,.0f} ({slot.trade_count} trades)"
+        f"{halt_warning}"
     )
     return True
 
 
 def handle_entry(slot, candidate, path):
     coin = candidate["coin"]
-    price_13h_ago, high_13h = fetch_13h_data(coin)
+    price_21h_ago, high_21h = fetch_21h_data(coin)
     current_price = candidate["current_price"]
     qualified, reason = qualifies_for_entry(
         coin=coin, current_price=current_price,
-        price_13h_ago=price_13h_ago, high_13h=high_13h,
+        price_21h_ago=price_21h_ago, high_21h=high_21h,
         vol_idr=candidate["vol_idr"], slot=slot)
     if not qualified:
         print(f"[SKIP] {coin}: {reason}", flush=True)
         return
-    gain_13h_str = ""
-    if price_13h_ago and price_13h_ago > 0:
-        gain_13h = (current_price - price_13h_ago) / price_13h_ago
-        gain_13h_str = f" | 13h: {gain_13h:.1%}"
-    high_str = f" | 13h high: Rp {high_13h:,.0f}" if high_13h else ""
+    gain_21h_str = ""
+    if price_21h_ago and price_21h_ago > 0:
+        gain_21h = (current_price - price_21h_ago) / price_21h_ago
+        gain_21h_str = f" | 21h: {gain_21h:.1%}"
+    high_str = f" | 21h high: Rp {high_21h:,.0f}" if high_21h else ""
     investable = slot.balance * (1.0 - 0.000111)
     qty = investable / current_price
-    slot.deployed_capital = slot.balance  # record what we invested
+    slot.deployed_capital = slot.balance
     slot.coin = coin
     slot.entry_price = current_price
     slot.peak_price = current_price
     slot.qty_coin = qty
-    slot.balance = 0.0  # capital is now deployed, not in cash
+    slot.balance = 0.0
     slot.entry_ts = int(time.time())
     save_slot(slot, path)
     notify(
         f"[MOMENTUM slot {slot.slot_id}] ENTRY [PAPER TRADE]\n"
         f"Coin: {coin.upper()}\n"
-        f"24h: {candidate['gain_24h_pct']:.1%}{gain_13h_str}{high_str}\n"
+        f"24h: {candidate['gain_24h_pct']:.1%}{gain_21h_str}{high_str}\n"
         f"Entry: Rp {current_price:,.0f} | Vol: Rp {candidate['vol_idr']/1e6:.0f}M\n"
         f"Qty: {qty:.4f} {coin.upper()}\n"
-        f"Capital: Rp {slot.deployed_capital:,.0f} (slot running: {slot.balance_pct:+.1f}%)\n"
+        f"Capital deployed: Rp {slot.deployed_capital:,.0f}\n"
+        f"Total reserve: Rp {slot.profit_reserve:,.0f}\n"
         f"Exits: hard {HARD_STOP_PCT:.0%} | breakeven | trail {TRAIL_PCT:.0%}"
     )
 
@@ -308,13 +299,12 @@ def main():
         trade_pct = (equity - deployed) / deployed * 100 if deployed > 0 else 0.0
         exited = handle_exit(slot, current_price, path)
         if not exited:
-            reserve_str = f" | Reserve: Rp {slot.profit_reserve:,.0f}" if slot.profit_reserve > 0 else ""
             notify_throttled(slot,
                 f"[MOMENTUM slot {slot.slot_id}] Check-in\n"
                 f"Coin: {slot.coin.upper()}\n"
                 f"Price: Rp {current_price:,.0f}\n"
                 f"Trade: Rp {equity:,.0f} ({trade_pct:+.2f}%) | Peak: Rp {slot.peak_price:,.0f}\n"
-                f"Slot from start: {slot.balance_pct:+.2f}%{reserve_str}\n"
+                f"Total reserve: Rp {slot.profit_reserve:,.0f}\n"
                 f"Action: holding")
             save_slot(slot, path)
     candidates = scan_market(summaries,
@@ -328,8 +318,8 @@ def main():
             scan_summary = getattr(slot, "_scan_summary", "")
             notify_throttled(slot,
                 f"[MOMENTUM slot {slot.slot_id}] Check-in\n"
-                f"Status: empty -- no qualifying coins\n"
-                f"Slot from start: {slot.balance_pct:+.2f}%\n"
+                f"Status: empty\n"
+                f"Balance: Rp {slot.balance:,.0f} | Reserve: Rp {slot.profit_reserve:,.0f}\n"
                 f"{scan_summary}")
             save_slot(slot, path)
             continue

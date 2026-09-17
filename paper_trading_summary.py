@@ -1,81 +1,28 @@
-"""
-Cross-asset portfolio summary -- reads all four state files (written by
-the two separate trading workflows, on their own schedules) and sends
-ONE combined summary to Telegram. Deliberately a separate, independent
-script/workflow rather than bolted onto either trading workflow, since
-this needs data from both and shouldn't be coupled to either schedule.
-
-Format is one block of labeled lines per asset, not a fixed-width table
--- a real table's column alignment breaks on Telegram's mobile view
-(different monospace rendering width than a desktop terminal), while
-labeled lines wrap naturally and stay readable at any screen width.
-
-Regime context is shown for native crypto assets only, reusing the same
-guarded regime_manager logic live_runner.py already uses -- informational,
-never decision-driving (see spec Section 11d on why automated
-regime-switching was tried and rejected). Wrapper assets correctly show
-no regime, since regime_manager's own guard refuses to classify that
-kind of data (see spec Section 11e/11f).
-
-Run: python3 paper_trading_summary.py
-"""
-
-import json
-import os
-import urllib.parse
-import urllib.request
+import json, os, urllib.parse, urllib.request
 from datetime import datetime, timezone
+from strategy_momentum import INITIAL_CAPITAL
 
-from indodax_data import fetch_paged
-
-ASSETS = [
-    {"label": "BTC", "state_file": "state_btc.json", "symbol": "BTCIDR", "native": True},
-    {"label": "ETH", "state_file": "state_eth.json", "symbol": "ETHIDR", "native": True},
-    {"label": "TSLAX", "state_file": "state_tslax.json", "symbol": "TSLAXIDR", "native": False},
-    {"label": "GOOGLX", "state_file": "state_googlx.json", "symbol": "GOOGLXIDR", "native": False},
+SLOTS = [
+    {"label": "Slot 1", "state_file": "state_momentum_1.json"},
+    {"label": "Slot 2", "state_file": "state_momentum_2.json"},
 ]
+SEP = "\u2500" * 28
 
 
-def _fetch_latest_price(symbol: str):
+def fetch_price(coin):
     try:
-        candles = fetch_paged(symbol, "60", days=1)
-        if not candles:
-            return None
-        return candles[-1]["close"]
-    except Exception as e:
-        print(f"[WARN] could not fetch latest price for {symbol}: {e}", flush=True)
-        return None
+        from indodax_data import fetch_paged
+        candles = fetch_paged(f"{coin.upper()}IDR", "60", days=1)
+        return candles[-1]["close"] if candles else 0.0
+    except:
+        return 0.0
 
 
-def _fetch_regime(symbol: str):
-    """Native crypto only. Fetches enough real history for a genuine
-    classification, not just enough for a single price point."""
-    try:
-        candles = fetch_paged(symbol, "15", days=35)
-        if not candles:
-            return None
-        from regime_manager import apply_persistence, classify_all
-        raw = classify_all(candles)
-        confirmed = apply_persistence(raw)
-        return confirmed[-1]["confirmed"]
-    except Exception as e:
-        print(f"[WARN] could not fetch regime for {symbol}: {e}", flush=True)
-        return None
-
-
-def _load_state(path: str):
-    if not os.path.exists(path):
-        return None
-    with open(path) as f:
-        return json.load(f)
-
-
-def _send_telegram(message: str) -> None:
+def send_telegram(message):
     print(message, flush=True)
     bot_token = os.environ.get("TELEGRAM_BOT_TOKEN")
     chat_id = os.environ.get("TELEGRAM_CHAT_ID")
     if not (bot_token and chat_id):
-        print("[WARN] TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID not set -- printed only", flush=True)
         return
     url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
     data = urllib.parse.urlencode({"chat_id": chat_id, "text": message}).encode()
@@ -89,90 +36,60 @@ def _send_telegram(message: str) -> None:
         print(f"[TELEGRAM FAILED] {e}", flush=True)
 
 
-def build_summary():
-    rows = []
-    missing = []
-    total_initial = 0.0
-    total_current = 0.0
-    total_reserve = 0.0
-
-    for asset in ASSETS:
-        state = _load_state(asset["state_file"])
-        if state is None:
-            missing.append(asset["label"])
-            continue
-
-        principal = state.get("principal", 0.0)
-        reserve = state.get("profit_reserve", 0.0)
-        cash = state.get("idr", 0.0)
-        lots = state.get("lots", [])
-        coin_qty = sum(l.get("qty_coin", 0.0) for l in lots)
-
-        price = _fetch_latest_price(asset["symbol"]) if coin_qty > 0 else 0.0
-        if coin_qty > 0 and price is None:
-            current_equity = cash
-            price_note = " (price unavailable, position value omitted)"
-        else:
-            current_equity = cash + coin_qty * (price or 0.0)
-            price_note = ""
-
-        pct = ((current_equity - principal) / principal * 100) if principal > 0 else 0.0
-
-        regime = _fetch_regime(asset["symbol"]) if asset["native"] else None
-
-        rows.append({
-            "label": asset["label"],
-            "note": price_note,
-            "initial": principal,
-            "current": current_equity,
-            "pct": pct,
-            "reserve": reserve,
-            "regime": regime,
-            "has_position": coin_qty > 0,
-        })
-        total_initial += principal
-        total_current += current_equity
-        total_reserve += reserve
-
-    return rows, missing, total_initial, total_current, total_reserve
-
-
-def format_message(rows, missing, total_initial, total_current, total_reserve) -> str:
-    now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-    lines = [f"Portfolio summary -- {now}", ""]
-
-    for r in rows:
-        lines.append(f"{r['label']}{r['note']}")
-        lines.append(f"  Initial: Rp {r['initial']:,.0f}")
-        lines.append(f"  Current: Rp {r['current']:,.0f}  ({r['pct']:+.2f}%)")
-        lines.append(f"  Reserve: Rp {r['reserve']:,.0f}")
-        if r["regime"] is not None:
-            lines.append(f"  Regime:  {r['regime']}")
-        lines.append(f"  Position: {'open' if r['has_position'] else 'in cash'}")
-        lines.append("")
-
-    if len(rows) > 1:
-        total_pct = ((total_current - total_initial) / total_initial * 100) if total_initial > 0 else 0.0
-        lines.append("TOTAL")
-        lines.append(f"  Initial: Rp {total_initial:,.0f}")
-        lines.append(f"  Current: Rp {total_current:,.0f}  ({total_pct:+.2f}%)")
-        lines.append(f"  Reserve: Rp {total_reserve:,.0f}")
-        lines.append("")
-
-    if missing:
-        lines.append(f"No data yet for: {', '.join(missing)} -- first tick hasn't run.")
-
-    return "\n".join(lines).rstrip()
-
-
 def main():
-    rows, missing, total_initial, total_current, total_reserve = build_summary()
-    if not rows:
-        _send_telegram("Portfolio summary: no paper-trading data exists yet for any asset.")
-        return
-    message = format_message(rows, missing, total_initial, total_current, total_reserve)
-    _send_telegram(message)
+    now_str = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M WIB")
+    total_initial = 0.0
+    total_value = 0.0
+    total_reserve = 0.0
+    lines = ["\U0001f4ca Momentum Summary", now_str, SEP]
 
+    for slot_info in SLOTS:
+        path = slot_info["state_file"]
+        label = slot_info["label"]
+        if not os.path.exists(path):
+            lines.append(f"{label}: no data yet")
+            lines.append("")
+            total_initial += INITIAL_CAPITAL
+            total_value += INITIAL_CAPITAL
+            continue
+        with open(path) as f:
+            d = json.load(f)
+        initial = d.get("initial_capital", INITIAL_CAPITAL)
+        balance = d.get("balance", initial)
+        reserve = d.get("profit_reserve", 0.0)
+        deployed = d.get("deployed_capital", 0.0)
+        coin = d.get("coin")
+        qty = d.get("qty_coin", 0.0)
+        trade_count = d.get("trade_count", 0)
+        halted = d.get("halted", False)
+        if coin and qty > 0:
+            price = fetch_price(coin)
+            open_value = qty * price if price > 0 else deployed
+            current_value = open_value + reserve
+            status = f"{coin.upper()} (holding)"
+            deployed_str = f"  Deployed: Rp {deployed:,.0f}\n  Current value: Rp {open_value:,.0f}"
+        else:
+            current_value = balance + reserve
+            status = "in cash" + (" -- HALTED" if halted else "")
+            deployed_str = f"  Balance: Rp {balance:,.0f}"
+        total_initial += initial
+        total_value += current_value
+        total_reserve += reserve
+        lines.append(f"{label}: {status}")
+        lines.append(deployed_str)
+        lines.append(f"  Reserve: Rp {reserve:,.0f}")
+        lines.append(f"  All-time trades: {trade_count}")
+        lines.append("")
+
+    total_pnl = total_value - total_initial
+    total_pnl_pct = (total_pnl / total_initial * 100) if total_initial > 0 else 0.0
+    lines.append(SEP)
+    lines.append(f"Total initial: Rp {total_initial:,.0f}")
+    lines.append(f"Total reserve: Rp {total_reserve:,.0f}")
+    lines.append(f"Total value: Rp {total_value:,.0f}")
+    lines.append(f"Total P&L: Rp {total_pnl:+,.0f} ({total_pnl_pct:+.2f}%)")
+    lines.append(SEP)
+    send_telegram("\n".join(lines))
 
 if __name__ == "__main__":
     main()

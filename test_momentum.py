@@ -2,7 +2,7 @@ import time
 from strategy_momentum import (
     MomentumSlot, check_exit, qualifies_for_entry,
     HARD_STOP_PCT, TRAIL_PCT, ROUNDTRIP_FEE_PCT,
-    MIN_GAIN_21H_PCT, MAX_DROP_FROM_13H_HIGH, EXCLUDED_COINS,
+    MIN_GAIN_21H_PCT, MAX_DROP_FROM_21H_HIGH, EXCLUDED_COINS,
     INITIAL_CAPITAL, HALT_THRESHOLD, MIN_PRICE_IDR,
     MIN_VOL_IDR, COOLDOWN_HOURS,
 )
@@ -151,9 +151,9 @@ def test_halt_threshold():
 
 def test_balance_pct():
     slot = MomentumSlot(slot_id=1)
-    slot.balance = 1_200_000
+    slot.balance = INITIAL_CAPITAL * 1.20
     assert abs(slot.balance_pct - 20.0) < 0.01
-    slot.balance = 800_000
+    slot.balance = INITIAL_CAPITAL * 0.80
     assert abs(slot.balance_pct - (-20.0)) < 0.01
     print("  ok  balance_pct tracks correctly")
 

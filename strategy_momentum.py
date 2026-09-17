@@ -6,13 +6,17 @@ HARD_STOP_PCT          = 0.03
 TRAIL_PCT              = 0.03
 ROUNDTRIP_FEE_PCT      = 0.0023
 MIN_GAIN_21H_PCT       = 0.13
-MAX_DROP_FROM_13H_HIGH = 0.05
-INITIAL_CAPITAL        = 1_000_000
+MAX_DROP_FROM_21H_HIGH = 0.05
+INITIAL_CAPITAL        = 2_500_000
+PROTECTION_THRESHOLD   = 3_000_000
+PROFIT_SWEEP_THRESHOLD = 0.10
+PROFIT_SWEEP_PCT       = 0.50
 HALT_THRESHOLD         = 0.60
 EXCLUDED_COINS         = {"btc", "eth", "tslax", "googlx", "nvdax"}
 MIN_VOL_IDR            = 100_000_000
 MIN_PRICE_IDR          = 300
 COOLDOWN_HOURS         = 13
+PROFIT_COOLDOWN_EXEMPT = 0.13
 
 
 @dataclass
@@ -26,10 +30,10 @@ class MomentumSlot:
     qty_coin: float = 0.0
     trade_count: int = 0
     total_pnl: float = 0.0
+    profit_reserve: float = 0.0
+    deployed_capital: float = 0.0
     halted: bool = False
     entry_ts: int = 0
-    deployed_capital: float = 0.0  # exact amount invested at entry
-    profit_reserve: float = 0.0    # realized profit swept to reserve, never re-risked
     last_routine_notify_ts: float = 0.0
     loss_cooldown: dict = field(default_factory=dict)
 
@@ -39,8 +43,6 @@ class MomentumSlot:
 
     @property
     def is_halted_by_loss(self):
-        # Only check halt when not in a position -- while deployed,
-        # balance is 0 which would falsely trigger the 40% loss check.
         if self.is_occupied:
             return False
         return self.balance <= self.initial_capital * HALT_THRESHOLD
@@ -48,6 +50,16 @@ class MomentumSlot:
     @property
     def balance_pct(self):
         return (self.balance / self.initial_capital - 1.0) * 100
+
+    @property
+    def total_value(self):
+        return self.balance + self.profit_reserve
+
+    @property
+    def in_protection_mode(self):
+        if self.balance < self.initial_capital:
+            return False
+        return self.balance >= PROTECTION_THRESHOLD
 
 
 def check_exit(slot, current_price):
@@ -67,7 +79,7 @@ def check_exit(slot, current_price):
     return None, None
 
 
-def qualifies_for_entry(coin, current_price, price_13h_ago, high_13h, vol_idr, slot):
+def qualifies_for_entry(coin, current_price, price_21h_ago, high_21h, vol_idr, slot):
     import time as _time
     coin_l = coin.lower()
     if coin_l in EXCLUDED_COINS:
@@ -76,22 +88,14 @@ def qualifies_for_entry(coin, current_price, price_13h_ago, high_13h, vol_idr, s
         return False, f"price Rp {current_price:,.0f} below Rp {MIN_PRICE_IDR:,.0f}"
     if vol_idr < MIN_VOL_IDR:
         return False, f"volume below Rp {MIN_VOL_IDR/1e6:.0f}M"
-    # 13h gain check -- if candle data unavailable (common for smaller
-    # altcoins on Indodax TradingView endpoint), skip this check rather
-    # than blocking all entries. The pre-filter already requires >= 13%
-    # 24h gain, which is a reasonable proxy when 13h data is missing.
-    if price_13h_ago and price_13h_ago > 0 and current_price > 0:
-        gain_13h = (current_price - price_13h_ago) / price_13h_ago
-        if gain_13h < MIN_GAIN_21H_PCT:
-            return False, f"13h gain {gain_13h:.1%} below {MIN_GAIN_21H_PCT:.0%}"
-    else:
-        print(f"[INFO] no 13h candle data for {coin_l} -- relying on 24h pre-filter", flush=True)
-
-    # Near-high check -- only applied when 13h high data is available
-    if high_13h and high_13h > 0:
-        drop = (high_13h - current_price) / high_13h
-        if drop > MAX_DROP_FROM_13H_HIGH:
-            return False, f"price {drop:.1%} below 13h high Rp {high_13h:,.0f}"
+    if price_21h_ago and price_21h_ago > 0 and current_price > 0:
+        gain_21h = (current_price - price_21h_ago) / price_21h_ago
+        if gain_21h < MIN_GAIN_21H_PCT:
+            return False, f"21h gain {gain_21h:.1%} below {MIN_GAIN_21H_PCT:.0%}"
+    if high_21h and high_21h > 0:
+        drop = (high_21h - current_price) / high_21h
+        if drop > MAX_DROP_FROM_21H_HIGH:
+            return False, f"price {drop:.1%} below 21h high Rp {high_21h:,.0f}"
     cooldown_expires = slot.loss_cooldown.get(coin_l, 0)
     if _time.time() < cooldown_expires:
         hours_left = (cooldown_expires - _time.time()) / 3600

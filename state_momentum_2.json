@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "conx",
   "entry_price": 201943.0,
-  "peak_price": 202382.0,
+  "peak_price": 202855.0,
   "qty_coin": 6.496205599895723,
   "trade_count": 17,
   "total_pnl": 636338.1519081343,
@@ -12,7 +12,7 @@
   "entry_ts": 1789595002,
   "deployed_capital": 1312008.8804454715,
   "profit_reserve": 0.0,
-  "last_routine_notify_ts": 1789595654.7513516,
+  "last_routine_notify_ts": 1789603817.524901,
   "loss_cooldown": {
     "show": 1789568935.9476104,
     "arb": 1789634012.3491783,

@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "skyai",
   "entry_price": 1073.0,
-  "peak_price": 1073.0,
+  "peak_price": 1074.0,
   "qty_coin": 1207.5775292946723,
   "trade_count": 8,
   "total_pnl": 295874.53100612503,
@@ -12,7 +12,7 @@
   "entry_ts": 1789602826,
   "deployed_capital": 1295874.531006125,
   "profit_reserve": 0.0,
-  "last_routine_notify_ts": 1789595653.2890828,
+  "last_routine_notify_ts": 1789603816.1205487,
   "loss_cooldown": {
     "puffer": 1789574192.6646125,
     "lsk": 1789575201.8003824,

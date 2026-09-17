@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "lsk",
   "entry_price": 6096.0,
-  "peak_price": 6108.0,
+  "peak_price": 6298.0,
   "qty_coin": 212.04183284813166,
   "trade_count": 9,
   "total_pnl": 292750.50834863726,
@@ -12,7 +12,7 @@
   "entry_ts": 1789608914,
   "deployed_capital": 1292750.5083486373,
   "profit_reserve": 0.0,
-  "last_routine_notify_ts": 1789603816.1205487,
+  "last_routine_notify_ts": 1789611515.1038072,
   "loss_cooldown": {
     "puffer": 1789574192.6646125,
     "lsk": 1789575201.8003824,

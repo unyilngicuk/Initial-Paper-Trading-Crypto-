@@ -2,16 +2,16 @@
   "slot_id": 2,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "myx",
-  "entry_price": 1807.0,
-  "peak_price": 1807.0,
-  "qty_coin": 1143.124881219845,
-  "trade_count": 14,
-  "total_pnl": -434144.0296230281,
+  "coin": "conx",
+  "entry_price": 267711.0,
+  "peak_price": 267711.0,
+  "qty_coin": 6.968872574965415,
+  "trade_count": 15,
+  "total_pnl": -634149.0446273875,
   "profit_reserve": 0.0,
-  "deployed_capital": 2065855.9703769719,
+  "deployed_capital": 1865850.9553726125,
   "halted": false,
-  "entry_ts": 1789742048,
+  "entry_ts": 1789742850,
   "last_routine_notify_ts": 1789741301.7919698,
   "loss_cooldown": {
     "genius": 1789765521.830429,
@@ -25,6 +25,7 @@
     "met": 1789767337.9667723,
     "wld": 1789770331.1683657,
     "fet": 1789778223.9943814,
-    "br": 1789788847.4120011
+    "br": 1789788847.4120011,
+    "myx": 1789789646.1920638
   }
 }

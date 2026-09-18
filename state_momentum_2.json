@@ -2,16 +2,16 @@
   "slot_id": 2,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "zama",
-  "entry_price": 967.0,
-  "peak_price": 1052.999,
-  "qty_coin": 1857.4054085456708,
-  "trade_count": 17,
-  "total_pnl": -703689.5794796587,
+  "coin": "strk",
+  "entry_price": 677.0,
+  "peak_price": 677.0,
+  "qty_coin": 2775.327119221064,
+  "trade_count": 18,
+  "total_pnl": -620894.9596278584,
   "profit_reserve": 0.0,
-  "deployed_capital": 1796310.4205203413,
+  "deployed_capital": 1879105.0403721416,
   "halted": false,
-  "entry_ts": 1789748502,
+  "entry_ts": 1789755615,
   "last_routine_notify_ts": 1789752965.442066,
   "loss_cooldown": {
     "genius": 1789765521.830429,
@@ -27,6 +27,7 @@
     "fet": 1789778223.9943814,
     "br": 1789788847.4120011,
     "myx": 1789789646.1920638,
-    "inj": 1789795293.0495403
+    "inj": 1789795293.0495403,
+    "zama": 1789802413.5884652
   }
 }

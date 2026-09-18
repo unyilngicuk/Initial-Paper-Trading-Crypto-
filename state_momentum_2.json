@@ -2,16 +2,16 @@
   "slot_id": 2,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "uni",
-  "entry_price": 151843.0,
-  "peak_price": 151843.0,
-  "qty_coin": 15.580050630117833,
-  "trade_count": 7,
-  "total_pnl": -134015.747919037,
+  "coin": "genius",
+  "entry_price": 6106.0,
+  "peak_price": 6106.0,
+  "qty_coin": 358.3529287313436,
+  "trade_count": 8,
+  "total_pnl": -311654.11077271216,
   "profit_reserve": 0.0,
-  "deployed_capital": 2365984.252080963,
+  "deployed_capital": 2188345.889227288,
   "halted": false,
-  "entry_ts": 1789707335,
+  "entry_ts": 1789716077,
   "last_routine_notify_ts": 1789713635.9262896,
   "loss_cooldown": {
     "genius": 1789707455.8788068,
@@ -20,6 +20,7 @@
     "conx": 1789742394.7291598,
     "useless": 1789743533.1363673,
     "arb": 1789752821.0560882,
-    "coti": 1789754130.5757887
+    "coti": 1789754130.5757887,
+    "uni": 1789762874.720183
   }
 }

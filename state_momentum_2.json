@@ -2,16 +2,16 @@
   "slot_id": 2,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "fet",
-  "entry_price": 3189.0,
-  "peak_price": 3321.0,
-  "qty_coin": 675.1893145959715,
-  "trade_count": 11,
-  "total_pnl": -346582.2463827953,
+  "coin": "near",
+  "entry_price": 61665.0,
+  "peak_price": 61665.0,
+  "qty_coin": 35.149943186725345,
+  "trade_count": 12,
+  "total_pnl": -332238.13182321424,
   "profit_reserve": 0.0,
-  "deployed_capital": 2153417.7536172047,
+  "deployed_capital": 2167761.8681767858,
   "halted": false,
-  "entry_ts": 1789723539,
+  "entry_ts": 1789731426,
   "last_routine_notify_ts": 1789728562.6396358,
   "loss_cooldown": {
     "genius": 1789765521.830429,
@@ -23,6 +23,7 @@
     "coti": 1789754130.5757887,
     "uni": 1789762874.720183,
     "met": 1789767337.9667723,
-    "wld": 1789770331.1683657
+    "wld": 1789770331.1683657,
+    "fet": 1789778223.9943814
   }
 }

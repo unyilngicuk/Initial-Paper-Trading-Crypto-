@@ -163,7 +163,7 @@ def scan_market(summaries, already_held, slots):
         rejected["passed_prefilter"] += 1
         candidates.append({"coin": coin, "current_price": current,
                             "gain_24h_pct": gain_24h, "vol_idr": vol_idr})
-    candidates.sort(key=lambda x: x["vol_idr"], reverse=True)
+    candidates.sort(key=lambda x: x["gain_24h_pct"], reverse=True)
     eligible = total_idr_pairs - rejected["excluded_or_held"]
     top_str = ", ".join(
         c["coin"].upper() + " (" + "{:.0%}".format(c["gain_24h_pct"]) + ")"

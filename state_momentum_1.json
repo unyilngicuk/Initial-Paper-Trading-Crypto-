@@ -2,16 +2,16 @@
   "slot_id": 1,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "strk",
-  "entry_price": 651.0,
-  "peak_price": 685.0,
-  "qty_coin": 3949.4685000875224,
-  "trade_count": 16,
-  "total_pnl": 71389.41778235091,
+  "coin": "inj",
+  "entry_price": 118593.0,
+  "peak_price": 118593.0,
+  "qty_coin": 21.92680212398589,
+  "trade_count": 17,
+  "total_pnl": 100653.91687463177,
   "profit_reserve": 0.0,
-  "deployed_capital": 2571389.417782351,
+  "deployed_capital": 2600653.916874632,
   "halted": false,
-  "entry_ts": 1789747670,
+  "entry_ts": 1789749230,
   "last_routine_notify_ts": 1789748491.5955262,
   "loss_cooldown": {
     "near": 1789768060.0869968,
@@ -27,6 +27,7 @@
     "arb": 1789757713.1938603,
     "myx": 1789788100.4251962,
     "trollsol": 1789792524.9693696,
-    "br": 1789794466.9079068
+    "br": 1789794466.9079068,
+    "strk": 1789796023.225952
   }
 }

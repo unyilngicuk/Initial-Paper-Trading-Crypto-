@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "strk",
   "entry_price": 677.0,
-  "peak_price": 680.0,
+  "peak_price": 698.0,
   "qty_coin": 2775.327119221064,
   "trade_count": 18,
   "total_pnl": -620894.9596278584,
@@ -12,7 +12,7 @@
   "deployed_capital": 1879105.0403721416,
   "halted": false,
   "entry_ts": 1789755615,
-  "last_routine_notify_ts": 1789752965.442066,
+  "last_routine_notify_ts": 1789757167.0588996,
   "loss_cooldown": {
     "genius": 1789765521.830429,
     "ondo": 1789726876.5520554,

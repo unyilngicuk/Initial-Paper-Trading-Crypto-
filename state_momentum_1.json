@@ -2,16 +2,16 @@
   "slot_id": 1,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "trollsol",
-  "entry_price": 873.0,
-  "peak_price": 894.0,
-  "qty_coin": 2997.7993981079694,
-  "trade_count": 14,
-  "total_pnl": 117369.40255194064,
+  "coin": "br",
+  "entry_price": 15205.0,
+  "peak_price": 15205.0,
+  "qty_coin": 171.9013704696518,
+  "trade_count": 15,
+  "total_pnl": 114050.49759628857,
   "profit_reserve": 0.0,
-  "deployed_capital": 2617369.4025519406,
+  "deployed_capital": 2614050.4975962886,
   "halted": false,
-  "entry_ts": 1789741305,
+  "entry_ts": 1789745729,
   "last_routine_notify_ts": 1789744148.551096,
   "loss_cooldown": {
     "near": 1789768060.0869968,
@@ -25,6 +25,7 @@
     "uai": 1789745380.4637017,
     "fet": 1789755620.6271043,
     "arb": 1789757713.1938603,
-    "myx": 1789788100.4251962
+    "myx": 1789788100.4251962,
+    "trollsol": 1789792524.9693696
   }
 }

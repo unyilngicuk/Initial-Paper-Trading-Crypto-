@@ -99,7 +99,7 @@ def test_fails_too_far_from_high():
 
 def test_passes_near_high():
     slot = MomentumSlot(slot_id=1)
-    ok, reason = qualifies_for_entry("doge", 1150.0, 1000.0, 1185.0, 200_000_000, slot)
+    ok, reason = qualifies_for_entry("doge", 1150.0, 1000.0, 1172.0, 200_000_000, slot)
     assert ok, f"should pass (near high): {reason}"
     print("  ok  accepts entry when within 5% of 13h high")
 

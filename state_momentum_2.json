@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "arb",
   "entry_price": 3461.0,
-  "peak_price": 3615.0,
+  "peak_price": 3925.0,
   "qty_coin": 626.7987644338494,
   "trade_count": 5,
   "total_pnl": -330408.65165478084,
@@ -12,7 +12,7 @@
   "deployed_capital": 2169591.348345219,
   "halted": false,
   "entry_ts": 1789696735,
-  "last_routine_notify_ts": 1789697658.0512242,
+  "last_routine_notify_ts": 1789701475.7911057,
   "loss_cooldown": {
     "genius": 1789707455.8788068,
     "ondo": 1789726876.5520554,

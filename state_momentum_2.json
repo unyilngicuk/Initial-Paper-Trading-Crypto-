@@ -2,16 +2,16 @@
   "slot_id": 2,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "ena",
-  "entry_price": 3359.0,
-  "peak_price": 3359.0,
-  "qty_coin": 572.3084106453563,
-  "trade_count": 27,
-  "total_pnl": -577402.6403353254,
+  "coin": "strk",
+  "entry_price": 795.0,
+  "peak_price": 795.0,
+  "qty_coin": 2316.031604777169,
+  "trade_count": 28,
+  "total_pnl": -658550.4733046878,
   "profit_reserve": 0.0,
-  "deployed_capital": 1922597.3596646746,
+  "deployed_capital": 1841449.5266953122,
   "halted": false,
-  "entry_ts": 1789817095,
+  "entry_ts": 1789818257,
   "last_routine_notify_ts": 1789814519.8196523,
   "loss_cooldown": {
     "genius": 1789765521.830429,
@@ -32,6 +32,7 @@
     "strk": 1789806593.6372542,
     "pieverse": 1789813037.1388998,
     "syn": 1789856656.7421165,
-    "b2": 1789859911.1525714
+    "b2": 1789859911.1525714,
+    "ena": 1789865040.5401556
   }
 }

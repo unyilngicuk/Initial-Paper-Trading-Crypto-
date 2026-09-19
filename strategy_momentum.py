@@ -3,10 +3,10 @@ from typing import Optional
 
 STRATEGY_FAMILY = "MOMENTUM"
 HARD_STOP_PCT          = 0.03
-TRAIL_PCT              = 0.03
+TRAIL_PCT              = 0.07
 ROUNDTRIP_FEE_PCT      = 0.0023
-MIN_GAIN_21H_PCT       = 0.13
-MAX_DROP_FROM_21H_HIGH = 0.02
+MIN_GAIN_24H_PCT       = 0.15
+MAX_GAIN_5H_PCT        = 0.10   # freshness: must be <10% in last 5h
 INITIAL_CAPITAL        = 2_500_000
 PROTECTION_THRESHOLD   = 3_000_000
 PROFIT_SWEEP_THRESHOLD = 0.10
@@ -90,8 +90,8 @@ def qualifies_for_entry(coin, current_price, price_21h_ago, high_21h, vol_idr, s
         return False, f"volume below Rp {MIN_VOL_IDR/1e6:.0f}M"
     if price_21h_ago and price_21h_ago > 0 and current_price > 0:
         gain_21h = (current_price - price_21h_ago) / price_21h_ago
-        if gain_21h < MIN_GAIN_21H_PCT:
-            return False, f"21h gain {gain_21h:.1%} below {MIN_GAIN_21H_PCT:.0%}"
+        if gain_21h < MIN_GAIN_24H_PCT:
+            return False, f"21h gain {gain_21h:.1%} below {MIN_GAIN_24H_PCT:.0%}"
     if high_21h and high_21h > 0:
         drop = (high_21h - current_price) / high_21h
         if drop > MAX_DROP_FROM_21H_HIGH:

@@ -79,7 +79,8 @@ def check_exit(slot, current_price):
     return None, None
 
 
-def qualifies_for_entry(coin, current_price, price_21h_ago, high_21h, vol_idr, slot):
+def qualifies_for_entry(coin, current_price, price_24h_ago,
+                         price_5h_ago, vol_idr, slot):
     import time as _time
     coin_l = coin.lower()
     if coin_l in EXCLUDED_COINS:
@@ -88,14 +89,15 @@ def qualifies_for_entry(coin, current_price, price_21h_ago, high_21h, vol_idr, s
         return False, f"price Rp {current_price:,.0f} below Rp {MIN_PRICE_IDR:,.0f}"
     if vol_idr < MIN_VOL_IDR:
         return False, f"volume below Rp {MIN_VOL_IDR/1e6:.0f}M"
-    if price_21h_ago and price_21h_ago > 0 and current_price > 0:
-        gain_21h = (current_price - price_21h_ago) / price_21h_ago
-        if gain_21h < MIN_GAIN_24H_PCT:
-            return False, f"21h gain {gain_21h:.1%} below {MIN_GAIN_24H_PCT:.0%}"
-    if high_21h and high_21h > 0:
-        drop = (high_21h - current_price) / high_21h
-        if drop > MAX_DROP_FROM_21H_HIGH:
-            return False, f"price {drop:.1%} below 21h high Rp {high_21h:,.0f}"
+    if not price_24h_ago or price_24h_ago <= 0 or current_price <= 0:
+        return False, "invalid price data"
+    gain_24h = (current_price - price_24h_ago) / price_24h_ago
+    if gain_24h < MIN_GAIN_24H_PCT:
+        return False, f"24h gain {gain_24h:.1%} below {MIN_GAIN_24H_PCT:.0%}"
+    if price_5h_ago and price_5h_ago > 0:
+        gain_5h = (current_price - price_5h_ago) / price_5h_ago
+        if gain_5h >= MAX_GAIN_5H_PCT:
+            return False, f"5h gain {gain_5h:.1%} >= {MAX_GAIN_5H_PCT:.0%} (fresh spike)"
     cooldown_expires = slot.loss_cooldown.get(coin_l, 0)
     if _time.time() < cooldown_expires:
         hours_left = (cooldown_expires - _time.time()) / 3600

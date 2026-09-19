@@ -2,22 +2,23 @@
   "slot_id": 1,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "manta",
-  "entry_price": 1790.0,
-  "peak_price": 1874.0,
-  "qty_coin": 1305.0012953585358,
-  "trade_count": 5,
-  "total_pnl": -163788.36181638297,
+  "coin": "xtz",
+  "entry_price": 6264.0,
+  "peak_price": 6264.0,
+  "qty_coin": 369.9397160466184,
+  "trade_count": 6,
+  "total_pnl": -182440.36956500402,
   "profit_reserve": 0.0,
-  "deployed_capital": 2336211.638183617,
+  "deployed_capital": 2317559.630434996,
   "halted": false,
-  "entry_ts": 1789855278,
+  "entry_ts": 1789856645,
   "last_routine_notify_ts": 1789854042.5341523,
   "loss_cooldown": {
     "br": 1789892716.8635676,
     "syn": 1789893999.8333852,
     "ena": 1789897680.764344,
     "b2": 1789899219.4635937,
-    "zama": 1789902072.9515254
+    "zama": 1789902072.9515254,
+    "manta": 1789903438.521897
   }
 }

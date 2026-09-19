@@ -119,6 +119,28 @@ def fetch_21h_data(coin):
         return None, None
 
 
+def fetch_6h_price(coin):
+    try:
+        now_ts = int(time.time())
+        from_ts = now_ts - 7 * 3600
+        url = (f"{INDODAX_BASE}/tradingview/history"
+               f"?symbol={coin.upper()}_IDR&resolution=60"
+               f"&from={from_ts}&to={now_ts}")
+        req = urllib.request.Request(url, headers={"User-Agent": UA})
+        with urllib.request.urlopen(req, timeout=10) as r:
+            raw = r.read().decode().strip()
+        if not raw:
+            return None
+        data = json.loads(raw)
+        closes = data.get("c", [])
+        if not closes:
+            return None
+        return float(closes[-6]) if len(closes) >= 6 else float(closes[0])
+    except Exception as e:
+        print(f"[WARN] 6h fetch failed for {coin}: {e}", flush=True)
+        return None
+
+
 def scan_market(summaries, already_held, slots):
     tickers = summaries.get("tickers", {})
     prices_24h = summaries.get("prices_24h", {})
@@ -163,10 +185,18 @@ def scan_market(summaries, already_held, slots):
         rejected["passed_prefilter"] += 1
         candidates.append({"coin": coin, "current_price": current,
                             "gain_24h_pct": gain_24h, "vol_idr": vol_idr})
-    candidates.sort(key=lambda x: x["gain_24h_pct"], reverse=True)
+    # Rank by strongest 6h momentum -- fetch 6h price for each candidate
+    for c in candidates:
+        price_6h = fetch_6h_price(c["coin"])
+        if price_6h and price_6h > 0:
+            c["gain_6h_pct"] = (c["current_price"] - price_6h) / price_6h
+        else:
+            c["gain_6h_pct"] = c["gain_24h_pct"]  # fallback to 24h if unavailable
+    candidates.sort(key=lambda x: x["gain_6h_pct"], reverse=True)
     eligible = total_idr_pairs - rejected["excluded_or_held"]
     top_str = ", ".join(
-        c["coin"].upper() + " (" + "{:.0%}".format(c["gain_24h_pct"]) + ")"
+        c["coin"].upper() + " (24h:" + "{:.0%}".format(c["gain_24h_pct"]) +
+        " 6h:" + "{:.0%}".format(c.get("gain_6h_pct", c["gain_24h_pct"])) + ")"
         for c in candidates[:5]) or "none"
     log_lines = [
         f"[SCAN] {total_idr_pairs} IDR pairs, {eligible} eligible",

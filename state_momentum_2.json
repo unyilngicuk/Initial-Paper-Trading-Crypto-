@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "avax",
   "entry_price": 167851.0,
-  "peak_price": 167851.0,
+  "peak_price": 170937.0,
   "qty_coin": 10.461883445877298,
   "trade_count": 7,
   "total_pnl": -743767.4599141001,
@@ -12,7 +12,7 @@
   "deployed_capital": 1756232.5400858999,
   "halted": false,
   "entry_ts": 1789854049,
-  "last_routine_notify_ts": 1789850882.1828902,
+  "last_routine_notify_ts": 1789854876.0296009,
   "loss_cooldown": {
     "syn": 1789888822.0012436,
     "ena": 1789889560.6821437,

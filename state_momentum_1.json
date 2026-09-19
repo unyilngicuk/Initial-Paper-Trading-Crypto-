@@ -1,17 +1,17 @@
 {
   "slot_id": 1,
   "initial_capital": 2500000,
-  "balance": 0.0,
-  "coin": "jup",
-  "entry_price": 5165.0,
-  "peak_price": 5165.0,
-  "qty_coin": 296.60831131676787,
-  "trade_count": 32,
-  "total_pnl": -967848.0031772465,
+  "balance": 1372801.2344992296,
+  "coin": null,
+  "entry_price": 0.0,
+  "peak_price": 0.0,
+  "qty_coin": 0.0,
+  "trade_count": 33,
+  "total_pnl": -1127198.7655007704,
   "profit_reserve": 0.0,
-  "deployed_capital": 1532151.9968227535,
-  "halted": false,
-  "entry_ts": 1789817094,
+  "deployed_capital": 0.0,
+  "halted": true,
+  "entry_ts": 0,
   "last_routine_notify_ts": 1789815527.866333,
   "loss_cooldown": {
     "near": 1789768060.0869968,
@@ -38,6 +38,7 @@
     "b2": 1789853918.4115605,
     "crclx": 1789860646.860782,
     "ern": 1789861318.2846076,
-    "aioz": 1789863872.9305327
+    "aioz": 1789863872.9305327,
+    "jup": 1789864472.8989031
   }
 }

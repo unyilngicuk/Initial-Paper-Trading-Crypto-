@@ -2,16 +2,16 @@
   "slot_id": 1,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "crclx",
-  "entry_price": 1715196.0,
-  "peak_price": 1715196.0,
-  "qty_coin": 1.0376540441148212,
-  "trade_count": 29,
-  "total_pnl": -720022.3566320215,
+  "coin": "ern",
+  "entry_price": 7760.0,
+  "peak_price": 7760.0,
+  "qty_coin": 216.235625534393,
+  "trade_count": 30,
+  "total_pnl": -821825.2684579091,
   "profit_reserve": 0.0,
-  "deployed_capital": 1779977.6433679785,
+  "deployed_capital": 1678174.731542091,
   "halted": false,
-  "entry_ts": 1789810571,
+  "entry_ts": 1789813863,
   "last_routine_notify_ts": 1789811596.6268,
   "loss_cooldown": {
     "near": 1789768060.0869968,
@@ -35,6 +35,7 @@
     "zen": 1789838241.581232,
     "edena": 1789849694.7239466,
     "xtz": 1789853170.8427958,
-    "b2": 1789853918.4115605
+    "b2": 1789853918.4115605,
+    "crclx": 1789860646.860782
   }
 }

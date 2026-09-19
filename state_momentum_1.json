@@ -2,16 +2,16 @@
   "slot_id": 1,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "bank",
-  "entry_price": 674.997,
-  "peak_price": 674.997,
-  "qty_coin": 3427.51330200156,
-  "trade_count": 7,
-  "total_pnl": -186181.9698875104,
+  "coin": "audio",
+  "entry_price": 535.0,
+  "peak_price": 535.0,
+  "qty_coin": 4090.318286324732,
+  "trade_count": 8,
+  "total_pnl": -311436.78629954765,
   "profit_reserve": 0.0,
-  "deployed_capital": 2313818.0301124896,
+  "deployed_capital": 2188563.2137004524,
   "halted": false,
-  "entry_ts": 1789860159,
+  "entry_ts": 1789861092,
   "last_routine_notify_ts": 1789858023.426957,
   "loss_cooldown": {
     "br": 1789892716.8635676,
@@ -20,6 +20,7 @@
     "b2": 1789899219.4635937,
     "zama": 1789902072.9515254,
     "manta": 1789903438.521897,
-    "xtz": 1789906952.102443
+    "xtz": 1789906952.102443,
+    "bank": 1789907883.7852223
   }
 }

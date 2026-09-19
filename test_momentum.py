@@ -2,7 +2,7 @@ import time
 from strategy_momentum import (
     MomentumSlot, check_exit, qualifies_for_entry,
     HARD_STOP_PCT, TRAIL_PCT, ROUNDTRIP_FEE_PCT,
-    MIN_GAIN_21H_PCT, MAX_DROP_FROM_21H_HIGH, EXCLUDED_COINS,
+    MIN_GAIN_24H_PCT, MAX_GAIN_5H_PCT, EXCLUDED_COINS,
     INITIAL_CAPITAL, HALT_THRESHOLD, MIN_PRICE_IDR,
     MIN_VOL_IDR, COOLDOWN_HOURS,
 )
@@ -81,58 +81,58 @@ def test_empty_slot_no_exit():
 
 def test_qualifies_fully():
     slot = MomentumSlot(slot_id=1)
-    ok, reason = qualifies_for_entry("doge", 1150.0, 1000.0, 1160.0, 200_000_000, slot)
+    ok, reason = qualifies_for_entry("doge", 1150.0, 1000.0, 1095.0, 200_000_000, slot)
     assert ok, f"should qualify: {reason}"
     print("  ok  coin passing all filters qualifies")
 
 def test_fails_below_13pct_gain():
     slot = MomentumSlot(slot_id=1)
-    ok, _ = qualifies_for_entry("doge", 1120.0, 1000.0, 1130.0, 200_000_000, slot)
+    ok, _ = qualifies_for_entry("doge", 1120.0, 1000.0, 1095.0, 200_000_000, slot)
     assert not ok
     print("  ok  rejects <13% 13h gain")
 
 def test_fails_too_far_from_high():
     slot = MomentumSlot(slot_id=1)
-    ok, reason = qualifies_for_entry("doge", 1150.0, 1000.0, 1280.0, 200_000_000, slot)
+    ok, reason = qualifies_for_entry("doge", 1150.0, 1000.0, 1026.0, 200_000_000, slot)
     assert not ok, f"should reject (too far from high): {reason}"
     print("  ok  rejects when price >5% below 13h high")
 
 def test_passes_near_high():
     slot = MomentumSlot(slot_id=1)
-    ok, reason = qualifies_for_entry("doge", 1150.0, 1000.0, 1172.0, 200_000_000, slot)
+    ok, reason = qualifies_for_entry("doge", 1150.0, 1000.0, 1095.0, 200_000_000, slot)
     assert ok, f"should pass (near high): {reason}"
     print("  ok  accepts entry when within 5% of 13h high")
 
 def test_excludes_portfolio_coins():
     slot = MomentumSlot(slot_id=1)
     for coin in EXCLUDED_COINS:
-        ok, _ = qualifies_for_entry(coin, 2000.0, 1000.0, 2100.0, 999_999_999, slot)
+        ok, _ = qualifies_for_entry(coin, 2000.0, 1000.0, 1800.0, 999_999_999, slot)
         assert not ok
     print("  ok  excluded coins never qualify")
 
 def test_rejects_low_price():
     slot = MomentumSlot(slot_id=1)
-    ok, _ = qualifies_for_entry("doge", MIN_PRICE_IDR - 1, 200.0, 310.0, 200_000_000, slot)
+    ok, _ = qualifies_for_entry("doge", MIN_PRICE_IDR - 1, 200.0, 180.0, 200_000_000, slot)
     assert not ok
     print(f"  ok  rejects coins below Rp {MIN_PRICE_IDR:,.0f}")
 
 def test_rejects_low_volume():
     slot = MomentumSlot(slot_id=1)
-    ok, _ = qualifies_for_entry("doge", 1150.0, 1000.0, 1160.0, MIN_VOL_IDR - 1, slot)
+    ok, _ = qualifies_for_entry("doge", 1150.0, 1000.0, 1095.0, MIN_VOL_IDR - 1, slot)
     assert not ok
     print(f"  ok  rejects volume below Rp {MIN_VOL_IDR/1e6:.0f}M")
 
 def test_loss_cooldown_blocks():
     slot = MomentumSlot(slot_id=1)
     slot.loss_cooldown["doge"] = time.time() + COOLDOWN_HOURS * 3600
-    ok, reason = qualifies_for_entry("doge", 1150.0, 1000.0, 1160.0, 200_000_000, slot)
+    ok, reason = qualifies_for_entry("doge", 1150.0, 1000.0, 1095.0, 200_000_000, slot)
     assert not ok and "cooldown" in reason
     print(f"  ok  loss cooldown blocks re-entry for {COOLDOWN_HOURS}h")
 
 def test_cooldown_expires():
     slot = MomentumSlot(slot_id=1)
     slot.loss_cooldown["doge"] = time.time() - 1
-    ok, _ = qualifies_for_entry("doge", 1150.0, 1000.0, 1160.0, 200_000_000, slot)
+    ok, _ = qualifies_for_entry("doge", 1150.0, 1000.0, 1095.0, 200_000_000, slot)
     assert ok
     print("  ok  expired cooldown allows re-entry")
 

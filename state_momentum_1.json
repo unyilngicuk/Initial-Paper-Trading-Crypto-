@@ -2,16 +2,16 @@
   "slot_id": 1,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "xtz",
-  "entry_price": 6291.0,
-  "peak_price": 6291.0,
-  "qty_coin": 332.969043495822,
-  "trade_count": 25,
-  "total_pnl": -405059.20893997606,
+  "coin": "b2",
+  "entry_price": 14988.0,
+  "peak_price": 14988.0,
+  "qty_coin": 135.18912962687466,
+  "trade_count": 26,
+  "total_pnl": -473560.39035573206,
   "profit_reserve": 0.0,
-  "deployed_capital": 2094940.791060024,
+  "deployed_capital": 2026439.609644268,
   "halted": false,
-  "entry_ts": 1789802903,
+  "entry_ts": 1789806381,
   "last_routine_notify_ts": 1789804128.9164903,
   "loss_cooldown": {
     "near": 1789768060.0869968,
@@ -33,6 +33,7 @@
     "pieverse": 1789823650.8950522,
     "zama": 1789831968.1998494,
     "zen": 1789838241.581232,
-    "edena": 1789849694.7239466
+    "edena": 1789849694.7239466,
+    "xtz": 1789853170.8427958
   }
 }

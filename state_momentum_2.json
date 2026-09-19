@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "ern",
   "entry_price": 8111.0,
-  "peak_price": 8111.0,
+  "peak_price": 8156.0,
   "qty_coin": 202.44118264745902,
   "trade_count": 32,
   "total_pnl": -857817.2852651244,
@@ -12,7 +12,7 @@
   "deployed_capital": 1642182.7147348756,
   "halted": false,
   "entry_ts": 1789834619,
-  "last_routine_notify_ts": 1789831415.7194984,
+  "last_routine_notify_ts": 1789835373.4668086,
   "loss_cooldown": {
     "genius": 1789765521.830429,
     "ondo": 1789726876.5520554,

@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "xtz",
   "entry_price": 6252.0,
-  "peak_price": 6741.0,
+  "peak_price": 6746.0,
   "qty_coin": 293.19474806447073,
   "trade_count": 30,
   "total_pnl": -666742.9435676648,
@@ -12,7 +12,7 @@
   "deployed_capital": 1833257.0564323352,
   "halted": false,
   "entry_ts": 1789826598,
-  "last_routine_notify_ts": 1789827480.6381967,
+  "last_routine_notify_ts": 1789831415.7194984,
   "loss_cooldown": {
     "genius": 1789765521.830429,
     "ondo": 1789726876.5520554,

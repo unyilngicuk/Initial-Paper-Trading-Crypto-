@@ -2,16 +2,16 @@
   "slot_id": 1,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "zen",
-  "entry_price": 146041.0,
-  "peak_price": 146041.0,
-  "qty_coin": 14.754945543621423,
-  "trade_count": 22,
-  "total_pnl": -344933.7855141759,
+  "coin": "myx",
+  "entry_price": 1555.0,
+  "peak_price": 1555.0,
+  "qty_coin": 1303.7106745006677,
+  "trade_count": 23,
+  "total_pnl": -472504.849189722,
   "profit_reserve": 0.0,
-  "deployed_capital": 2155066.214485824,
+  "deployed_capital": 2027495.150810278,
   "halted": false,
-  "entry_ts": 1789786975,
+  "entry_ts": 1789791453,
   "last_routine_notify_ts": 1789787907.0800726,
   "loss_cooldown": {
     "near": 1789768060.0869968,
@@ -31,6 +31,7 @@
     "strk": 1789796023.225952,
     "inj": 1789820209.4817433,
     "pieverse": 1789823650.8950522,
-    "zama": 1789831968.1998494
+    "zama": 1789831968.1998494,
+    "zen": 1789838241.581232
   }
 }

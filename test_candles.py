@@ -1,26 +1,27 @@
-import urllib.request, json, time
+import urllib.request, json, ssl
 
-INDODAX_BASE = "https://indodax.com"
-UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36"
+ctx = ssl.create_default_context()
+ctx.check_hostname = False
+ctx.verify_mode = ssl.CERT_NONE
 
-coins = ["br", "avax", "near", "syn"]
+# Test Binance candle endpoint
+coins = ["NEAR", "AVAX", "ARB", "ENA", "MANTA"]
+
+print("Testing Binance candle endpoint from GitHub Actions:")
+print("-" * 50)
 
 for coin in coins:
-    now_ts = int(time.time())
-    from_ts = now_ts - 25 * 3600
-    url = (f"{INDODAX_BASE}/tradingview/history"
-           f"?symbol={coin.upper()}_IDR&resolution=60"
-           f"&from={from_ts}&to={now_ts}")
+    url = f"https://api.binance.com/api/v3/klines?symbol={coin}USDT&interval=1h&limit=24"
     try:
-        req = urllib.request.Request(url, headers={"User-Agent": UA})
-        with urllib.request.urlopen(req, timeout=10) as r:
-            raw = r.read().decode().strip()
-        if raw and raw != "OK":
-            data = json.loads(raw)
-            closes = data.get("c", [])
-            print(f"{coin.upper()}: {len(closes)} candles ✅")
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        with urllib.request.urlopen(req, timeout=10, context=ctx) as r:
+            data = json.loads(r.read().decode())
+        if data and len(data) > 0:
+            closes = [float(c[4]) for c in data]
+            print(f"{coin}: {len(data)} candles ✅ | last close: {closes[-1]:.4f}")
         else:
-            print(f"{coin.upper()}: returned '{raw}' ❌")
+            print(f"{coin}: empty response ❌")
     except Exception as e:
-        print(f"{coin.upper()}: {e} ❌")
-    time.sleep(1)
+        print(f"{coin}: {e} ❌")
+
+print("\nDone.")

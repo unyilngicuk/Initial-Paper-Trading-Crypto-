@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "bank",
   "entry_price": 672.0,
-  "peak_price": 673.0,
+  "peak_price": 673.002,
   "qty_coin": 2577.467372709824,
   "trade_count": 8,
   "total_pnl": -767749.6457496765,
@@ -12,7 +12,7 @@
   "deployed_capital": 1732250.3542503235,
   "halted": false,
   "entry_ts": 1789861906,
-  "last_routine_notify_ts": 1789858879.332787,
+  "last_routine_notify_ts": 1789863289.0633736,
   "loss_cooldown": {
     "syn": 1789888822.0012436,
     "ena": 1789889560.6821437,

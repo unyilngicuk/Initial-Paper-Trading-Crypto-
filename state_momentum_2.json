@@ -2,16 +2,16 @@
   "slot_id": 2,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "asetqu",
-  "entry_price": 346892.0,
-  "peak_price": 400000.0,
-  "qty_coin": 7.452188987249692,
-  "trade_count": 7,
-  "total_pnl": 85391.72064601164,
+  "coin": "arc",
+  "entry_price": 1278.0,
+  "peak_price": 1278.0,
+  "qty_coin": 1989.9869401235744,
+  "trade_count": 8,
+  "total_pnl": 43485.63638356654,
   "profit_reserve": 0.0,
-  "deployed_capital": 2585391.7206460116,
+  "deployed_capital": 2543485.6363835665,
   "halted": false,
-  "entry_ts": 1789924013,
+  "entry_ts": 1789933215,
   "last_routine_notify_ts": 1789930549.5996835,
   "loss_cooldown": {
     "zama": 1789952327.6512876,
@@ -19,6 +19,7 @@
     "br": 1789959816.999993,
     "manta": 1789964353.7570162,
     "avax": 1789968819.4214156,
-    "near": 1789970810.6574748
+    "near": 1789970810.6574748,
+    "asetqu": 1789980011.7655108
   }
 }

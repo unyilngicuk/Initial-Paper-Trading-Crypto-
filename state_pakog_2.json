@@ -12,7 +12,7 @@
   "deployed_capital": 2404069.868532032,
   "halted": false,
   "entry_ts": 1789934934,
-  "last_routine_notify_ts": 1789933371.8008826,
+  "last_routine_notify_ts": 1789937103.3276017,
   "loss_cooldown": {
     "hbar": 1789969149.2640603,
     "algo": 1789981733.9549472

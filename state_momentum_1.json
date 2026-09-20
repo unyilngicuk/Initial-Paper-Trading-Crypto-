@@ -2,16 +2,16 @@
   "slot_id": 1,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "ctsi",
-  "entry_price": 531.0,
-  "peak_price": 609.0,
-  "qty_coin": 4120.165743239265,
-  "trade_count": 11,
-  "total_pnl": -311949.1166919032,
+  "coin": "buildon",
+  "entry_price": 3694.0,
+  "peak_price": 3694.0,
+  "qty_coin": 617.5363716590145,
+  "trade_count": 12,
+  "total_pnl": -218567.40407345258,
   "profit_reserve": 0.0,
-  "deployed_capital": 2188050.883308097,
+  "deployed_capital": 2281432.5959265474,
   "halted": false,
-  "entry_ts": 1789876644,
+  "entry_ts": 1789885460,
   "last_routine_notify_ts": 1789881230.2234554,
   "loss_cooldown": {
     "br": 1789892716.8635676,
@@ -24,6 +24,7 @@
     "bank": 1789907883.7852223,
     "audio": 1789913308.942045,
     "avax": 1789915199.499907,
-    "ern": 1789919739.4536548
+    "ern": 1789919739.4536548,
+    "ctsi": 1789932255.6661944
   }
 }

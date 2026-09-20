@@ -228,7 +228,7 @@ def handle_entry(slot, candidate, path):
     gain_7d = (price - candidate["price_7d"]) / candidate["price_7d"]
     scores_str = " | ".join(k + ":" + str(v) for k, v in candidate["scores"].items())
     notify(
-        f"[PAK OGAH slot {slot.slot_id}] ENTRY [PAPER TRADE]\n"
+        f"[PAK OGAH slot {slot.slot_id}] ENTRY [PAPER TRADE] {__import__('datetime').datetime.utcnow().strftime('%H:%M:%S UTC')}\n"
         f"Coin: {coin.upper()}\n"
         f"Score: {score}/70\n"
         f"24h: {gain_24h:+.1%} | 7d: {gain_7d:+.1%}\n"

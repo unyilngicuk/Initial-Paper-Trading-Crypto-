@@ -2,21 +2,22 @@
   "slot_id": 2,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "avax",
-  "entry_price": 197188.0,
-  "peak_price": 199998.0,
-  "qty_coin": 13.583050186016159,
-  "trade_count": 5,
-  "total_pnl": 178711.8370940718,
+  "coin": "near",
+  "entry_price": 74200.0,
+  "peak_price": 74200.0,
+  "qty_coin": 36.08471766747911,
+  "trade_count": 6,
+  "total_pnl": 177783.2848715703,
   "profit_reserve": 0.0,
-  "deployed_capital": 2678711.837094072,
+  "deployed_capital": 2677783.2848715703,
   "halted": false,
-  "entry_ts": 1789918990,
+  "entry_ts": 1789922021,
   "last_routine_notify_ts": 1789918319.99389,
   "loss_cooldown": {
     "zama": 1789952327.6512876,
     "bank": 1789955434.004696,
     "br": 1789959816.999993,
-    "manta": 1789964353.7570162
+    "manta": 1789964353.7570162,
+    "avax": 1789968819.4214156
   }
 }

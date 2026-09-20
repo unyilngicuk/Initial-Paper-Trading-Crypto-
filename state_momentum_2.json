@@ -2,16 +2,16 @@
   "slot_id": 2,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "arc",
-  "entry_price": 1278.0,
-  "peak_price": 1292.0,
-  "qty_coin": 1989.9869401235744,
-  "trade_count": 8,
-  "total_pnl": 43485.63638356654,
+  "coin": "ena",
+  "entry_price": 3862.0,
+  "peak_price": 3862.0,
+  "qty_coin": 657.9602990051505,
+  "trade_count": 9,
+  "total_pnl": 41324.761806451716,
   "profit_reserve": 0.0,
-  "deployed_capital": 2543485.6363835665,
+  "deployed_capital": 2541324.7618064517,
   "halted": false,
-  "entry_ts": 1789933215,
+  "entry_ts": 1789942594,
   "last_routine_notify_ts": 1789938066.1893435,
   "loss_cooldown": {
     "zama": 1789952327.6512876,
@@ -20,6 +20,7 @@
     "manta": 1789964353.7570162,
     "avax": 1789968819.4214156,
     "near": 1789970810.6574748,
-    "asetqu": 1789980011.7655108
+    "asetqu": 1789980011.7655108,
+    "arc": 1789989393.2500494
   }
 }

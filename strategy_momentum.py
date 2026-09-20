@@ -14,7 +14,7 @@ PROFIT_SWEEP_PCT       = 0.50
 HALT_THRESHOLD         = 0.60
 EXCLUDED_COINS         = {"btc", "eth", "tslax", "googlx", "nvdax"}
 MIN_VOL_IDR            = 100_000_000
-MIN_PRICE_IDR          = 300
+MIN_PRICE_IDR          = 1_500
 COOLDOWN_HOURS         = 13
 PROFIT_COOLDOWN_EXEMPT = 0.13
 

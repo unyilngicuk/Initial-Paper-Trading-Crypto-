@@ -244,7 +244,7 @@ def handle_entry(slot, candidate, path):
     price_24h_ago = candidate.get("price_24h_ago", 0)
     qualified, reason = qualifies_for_entry(
         coin=coin, current_price=current_price,
-        price_24h_ago=price_24h_ago, price_5h_ago=price_5h_ago,
+        price_24h_ago=price_24h_ago,
         vol_idr=candidate["vol_idr"], slot=slot)
     if not qualified:
         print(f"[SKIP] {coin}: {reason}", flush=True)

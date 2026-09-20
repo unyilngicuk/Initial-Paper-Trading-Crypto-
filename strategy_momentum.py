@@ -81,7 +81,7 @@ def check_exit(slot, current_price):
 
 
 def qualifies_for_entry(coin, current_price, price_24h_ago,
-                         price_5h_ago, vol_idr, slot):
+                         vol_idr, slot):
     import time as _time
     coin_l = coin.lower()
     if coin_l in EXCLUDED_COINS:

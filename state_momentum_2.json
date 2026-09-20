@@ -2,18 +2,19 @@
   "slot_id": 2,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "bank",
-  "entry_price": 590.919,
-  "peak_price": 590.919,
-  "qty_coin": 4033.7964491435173,
-  "trade_count": 1,
-  "total_pnl": -116088.42188339122,
+  "coin": "br",
+  "entry_price": 20994.0,
+  "peak_price": 20994.0,
+  "qty_coin": 109.83105904329486,
+  "trade_count": 2,
+  "total_pnl": -193950.7749810908,
   "profit_reserve": 0.0,
-  "deployed_capital": 2383911.578116609,
+  "deployed_capital": 2306049.225018909,
   "halted": false,
-  "entry_ts": 1789905530,
+  "entry_ts": 1789908635,
   "last_routine_notify_ts": 1789906780.0501378,
   "loss_cooldown": {
-    "zama": 1789952327.6512876
+    "zama": 1789952327.6512876,
+    "bank": 1789955434.004696
   }
 }

@@ -29,6 +29,6 @@ jobs:
           for i in 1 2 3 4 5; do
             git add state_pakog_1.json state_pakog_2.json && \
             (git diff --cached --quiet || git commit -m "state: pakog tick [skip ci]") && \
-            git pull --rebase && \
+            git pull --rebase -X ours && \
             git push && break || sleep $((i * 3))
           done

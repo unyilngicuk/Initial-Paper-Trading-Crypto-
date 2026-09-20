@@ -2,16 +2,16 @@
   "slot_id": 1,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "audio",
-  "entry_price": 535.0,
-  "peak_price": 650.0,
-  "qty_coin": 4090.318286324732,
-  "trade_count": 8,
-  "total_pnl": -311436.78629954765,
+  "coin": "avax",
+  "entry_price": 178973.0,
+  "peak_price": 178973.0,
+  "qty_coin": 12.949997494452056,
+  "trade_count": 9,
+  "total_pnl": -182042.80517680664,
   "profit_reserve": 0.0,
-  "deployed_capital": 2188563.2137004524,
+  "deployed_capital": 2317957.1948231934,
   "halted": false,
-  "entry_ts": 1789861092,
+  "entry_ts": 1789866516,
   "last_routine_notify_ts": 1789865899.3057406,
   "loss_cooldown": {
     "br": 1789892716.8635676,
@@ -21,6 +21,7 @@
     "zama": 1789902072.9515254,
     "manta": 1789903438.521897,
     "xtz": 1789906952.102443,
-    "bank": 1789907883.7852223
+    "bank": 1789907883.7852223,
+    "audio": 1789913308.942045
   }
 }

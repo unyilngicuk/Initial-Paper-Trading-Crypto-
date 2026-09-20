@@ -5,7 +5,7 @@ STRATEGY_FAMILY = "MOMENTUM"
 HARD_STOP_PCT          = 0.03
 TRAIL_PCT              = 0.07
 ROUNDTRIP_FEE_PCT      = 0.0023
-MIN_GAIN_24H_PCT       = 0.15
+MIN_GAIN_24H_PCT       = 0.07
 MAX_GAIN_5H_PCT        = 0.10   # freshness: must be <10% in last 5h
 INITIAL_CAPITAL        = 2_500_000
 PROTECTION_THRESHOLD   = 3_000_000
@@ -14,7 +14,7 @@ PROFIT_SWEEP_PCT       = 0.50
 HALT_THRESHOLD         = 0.60
 EXCLUDED_COINS         = {"btc", "eth", "tslax", "googlx", "nvdax"}
 MIN_VOL_IDR            = 100_000_000
-MIN_PRICE_IDR          = 1_500
+MIN_PRICE_IDR          = 300
 COOLDOWN_HOURS         = 13
 PROFIT_COOLDOWN_EXEMPT = 0.13
 

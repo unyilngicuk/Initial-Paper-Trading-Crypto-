@@ -1,0 +1,30 @@
+name: Paper trade - Pak Ogah Lite
+on:
+  schedule:
+    - cron: "*/3 * * * *"
+  workflow_dispatch:
+jobs:
+  scan-and-trade:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run Pak Ogah Lite scanner
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          SLOT_1_STATE_PATH: state_pakog_1.json
+          SLOT_2_STATE_PATH: state_pakog_2.json
+        run: python3 pakog_runner.py
+      - name: Commit updated state back to repo
+        run: |
+          git config user.name "paper-trading-bot"
+          git config user.email "bot@example.com"
+          for i in 1 2 3 4 5; do
+            git pull --rebase && \
+            git add state_pakog_1.json state_pakog_2.json && \
+            (git diff --cached --quiet || git commit -m "state: pakog tick [skip ci]") && \
+            git push && break || sleep $((i * 3))
+          done

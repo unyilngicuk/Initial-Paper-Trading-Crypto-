@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Tuple
 from strategy_momentum import (
     COOLDOWN_HOURS, EXCLUDED_COINS, HALT_THRESHOLD, HARD_STOP_PCT,
-    INITIAL_CAPITAL, MAX_GAIN_5H_PCT, MIN_GAIN_24H_PCT,
+    INITIAL_CAPITAL, MAX_GAIN_24H_PCT, MIN_GAIN_10H_PCT, MIN_GAIN_24H_PCT,
     MIN_PRICE_IDR, MIN_VOL_IDR, PROFIT_COOLDOWN_EXEMPT,
     PROFIT_SWEEP_PCT, PROFIT_SWEEP_THRESHOLD, PROTECTION_THRESHOLD,
     ROUNDTRIP_FEE_PCT, TRAIL_PCT,
@@ -93,11 +93,11 @@ def fetch_current_price(coin):
         return None
 
 
-def fetch_5h_price(coin):
-    """Fetch price ~5 hours ago for freshness filter (must be <10% gain)."""
+def fetch_10h_price(coin):
+    """Fetch price ~10 hours ago for momentum confirmation (must be >5% gain)."""
     try:
         now_ts = int(time.time())
-        from_ts = now_ts - 6 * 3600
+        from_ts = now_ts - 11 * 3600
         url = (f"{INDODAX_BASE}/tradingview/history"
                f"?symbol={coin.upper()}_IDR&resolution=60"
                f"&from={from_ts}&to={now_ts}")
@@ -110,9 +110,9 @@ def fetch_5h_price(coin):
         closes = data.get("c", [])
         if not closes:
             return None
-        return float(closes[-5]) if len(closes) >= 5 else float(closes[0])
+        return float(closes[-10]) if len(closes) >= 10 else float(closes[0])
     except Exception as e:
-        print(f"[WARN] 5h fetch failed for {coin}: {e}", flush=True)
+        print(f"[WARN] 10h fetch failed for {coin}: {e}", flush=True)
         return None
 
 
@@ -154,7 +154,7 @@ def scan_market(summaries, already_held, slots):
             rejected["no_price_data"] += 1
             continue
         gain_24h = (current - price_24h) / price_24h
-        if gain_24h < MIN_GAIN_24H_PCT:
+        if gain_24h < MIN_GAIN_24H_PCT or gain_24h > MAX_GAIN_24H_PCT:
             rejected["below_gain_threshold"] += 1
             continue
         rejected["passed_prefilter"] += 1
@@ -171,7 +171,7 @@ def scan_market(summaries, already_held, slots):
         f"[SCAN] {total_idr_pairs} IDR pairs, {eligible} eligible",
         f"  below Rp{MIN_PRICE_IDR:,.0f}/coin:   {rejected['below_min_price']}",
         f"  below Rp{MIN_VOL_IDR//1_000_000}M volume: {rejected['below_min_volume']}",
-        f"  below {MIN_GAIN_24H_PCT:.0%} 24h gain: {rejected['below_gain_threshold']}",
+        f"  outside {MIN_GAIN_24H_PCT:.0%}-{MAX_GAIN_24H_PCT:.0%} 24h band: {rejected['below_gain_threshold']}",
         f"  passed pre-filter: {rejected['passed_prefilter']}",
         f"  top: {top_str}",
     ]
@@ -239,7 +239,7 @@ def handle_exit(slot, current_price, path):
 
 def handle_entry(slot, candidate, path):
     coin = candidate["coin"]
-    price_5h_ago = fetch_5h_price(coin)
+    price_5h_ago = fetch_10h_price(coin)
     current_price = candidate["current_price"]
     price_24h_ago = candidate.get("price_24h_ago", 0)
     qualified, reason = qualifies_for_entry(
@@ -249,10 +249,10 @@ def handle_entry(slot, candidate, path):
     if not qualified:
         print(f"[SKIP] {coin}: {reason}", flush=True)
         return
-    gain_5h_str = ""
+    gain_10h_str = ""
     if price_5h_ago and price_5h_ago > 0:
-        gain_5h = (current_price - price_5h_ago) / price_5h_ago
-        gain_5h_str = f" | 5h: {gain_5h:.1%}"
+        gain_10h = (current_price - price_5h_ago) / price_5h_ago
+        gain_10h_str = f" | 10h: {gain_10h:.1%}"
     high_str = ""
     investable = slot.balance * (1.0 - 0.000111)
     qty = investable / current_price
@@ -267,7 +267,7 @@ def handle_entry(slot, candidate, path):
     notify(
         f"[MOMENTUM slot {slot.slot_id}] ENTRY [PAPER TRADE]\n"
         f"Coin: {coin.upper()}\n"
-        f"24h: {candidate['gain_24h_pct']:.1%}{gain_5h_str}\n"
+        f"24h: {candidate['gain_24h_pct']:.1%}{gain_10h_str}\n"
         f"Entry: Rp {current_price:,.0f} | Vol: Rp {candidate['vol_idr']/1e6:.0f}M\n"
         f"Qty: {qty:.4f} {coin.upper()}\n"
         f"Capital deployed: Rp {slot.deployed_capital:,.0f}\n"

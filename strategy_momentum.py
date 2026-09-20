@@ -5,8 +5,9 @@ STRATEGY_FAMILY = "MOMENTUM"
 HARD_STOP_PCT          = 0.03
 TRAIL_PCT              = 0.07
 ROUNDTRIP_FEE_PCT      = 0.0023
-MIN_GAIN_24H_PCT       = 0.07
-MAX_GAIN_5H_PCT        = 0.10   # freshness: must be <10% in last 5h
+MIN_GAIN_24H_PCT       = 0.10   # lower bound of 24h gain band
+MAX_GAIN_24H_PCT       = 0.20   # upper bound of 24h gain band
+MIN_GAIN_10H_PCT       = 0.05   # momentum confirmation: must be >5% in last 10h
 INITIAL_CAPITAL        = 2_500_000
 PROTECTION_THRESHOLD   = 3_000_000
 PROFIT_SWEEP_THRESHOLD = 0.10
@@ -94,10 +95,12 @@ def qualifies_for_entry(coin, current_price, price_24h_ago,
     gain_24h = (current_price - price_24h_ago) / price_24h_ago
     if gain_24h < MIN_GAIN_24H_PCT:
         return False, f"24h gain {gain_24h:.1%} below {MIN_GAIN_24H_PCT:.0%}"
+    if gain_24h > MAX_GAIN_24H_PCT:
+        return False, f"24h gain {gain_24h:.1%} above {MAX_GAIN_24H_PCT:.0%} (too late)"
     if price_5h_ago and price_5h_ago > 0:
-        gain_5h = (current_price - price_5h_ago) / price_5h_ago
-        if gain_5h >= MAX_GAIN_5H_PCT:
-            return False, f"5h gain {gain_5h:.1%} >= {MAX_GAIN_5H_PCT:.0%} (fresh spike)"
+        gain_10h = (current_price - price_5h_ago) / price_5h_ago
+        if gain_10h < MIN_GAIN_10H_PCT:
+            return False, f"10h gain {gain_10h:.1%} below {MIN_GAIN_10H_PCT:.0%} (momentum not confirmed)"
     cooldown_expires = slot.loss_cooldown.get(coin_l, 0)
     if _time.time() < cooldown_expires:
         hours_left = (cooldown_expires - _time.time()) / 3600

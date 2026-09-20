@@ -2,16 +2,16 @@
   "slot_id": 1,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "show",
-  "entry_price": 64425.0,
-  "peak_price": 64425.0,
-  "qty_coin": 31.806852668054375,
-  "trade_count": 15,
-  "total_pnl": -450616.0352405086,
+  "coin": "conx",
+  "entry_price": 296063.0,
+  "peak_price": 296063.0,
+  "qty_coin": 6.496442498606961,
+  "trade_count": 16,
+  "total_pnl": -576430.2282902675,
   "profit_reserve": 0.0,
-  "deployed_capital": 2049383.9647594914,
+  "deployed_capital": 1923569.7717097325,
   "halted": false,
-  "entry_ts": 1789896803,
+  "entry_ts": 1789897650,
   "last_routine_notify_ts": 1789894598.7568839,
   "loss_cooldown": {
     "br": 1789943596.0551755,
@@ -27,6 +27,7 @@
     "ern": 1789919739.4536548,
     "ctsi": 1789932255.6661944,
     "buildon": 1789933531.4415195,
-    "strk": 1789940597.8944
+    "strk": 1789940597.8944,
+    "show": 1789944440.2449348
   }
 }

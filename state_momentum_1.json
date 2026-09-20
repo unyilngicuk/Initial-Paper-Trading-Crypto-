@@ -2,16 +2,18 @@
   "slot_id": 1,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "manta",
-  "entry_price": 1302.0,
-  "peak_price": 1344.0,
-  "qty_coin": 1919.9097542242703,
-  "trade_count": 0,
-  "total_pnl": 0.0,
+  "coin": "avax",
+  "entry_price": 186910.0,
+  "peak_price": 186910.0,
+  "qty_coin": 13.2597188833983,
+  "trade_count": 1,
+  "total_pnl": -21350.813444316387,
   "profit_reserve": 0.0,
-  "deployed_capital": 2500000,
+  "deployed_capital": 2478649.1865556836,
   "halted": false,
-  "entry_ts": 1789904932,
+  "entry_ts": 1789910980,
   "last_routine_notify_ts": 1789909192.9255204,
-  "loss_cooldown": {}
+  "loss_cooldown": {
+    "manta": 1789957777.0706787
+  }
 }

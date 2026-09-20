@@ -2,19 +2,20 @@
   "slot_id": 2,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "manta",
-  "entry_price": 1692.0,
-  "peak_price": 1692.0,
-  "qty_coin": 1446.550551663564,
-  "trade_count": 2,
-  "total_pnl": -52164.75687326258,
+  "coin": "genius",
+  "entry_price": 6996.0,
+  "peak_price": 6996.0,
+  "qty_coin": 332.91940339719906,
+  "trade_count": 3,
+  "total_pnl": -170637.29457289306,
   "profit_reserve": 0.0,
-  "deployed_capital": 2447835.2431267374,
+  "deployed_capital": 2329362.705427107,
   "halted": false,
-  "entry_ts": 1789883150,
+  "entry_ts": 1789883950,
   "last_routine_notify_ts": 1789882260.7355323,
   "loss_cooldown": {
     "br": 1789925765.7072723,
-    "b2": 1789929946.9211602
+    "b2": 1789929946.9211602,
+    "manta": 1789930745.9071178
   }
 }

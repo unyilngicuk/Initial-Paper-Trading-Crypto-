@@ -12,7 +12,7 @@
   "deployed_capital": 2320707.291878028,
   "halted": false,
   "entry_ts": 1789929299,
-  "last_routine_notify_ts": 1789928453.3667564,
+  "last_routine_notify_ts": 1789932595.3483143,
   "loss_cooldown": {
     "manta": 1789957777.0706787,
     "avax": 1789958509.4752862,

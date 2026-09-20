@@ -2,16 +2,16 @@
   "slot_id": 2,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "bank",
-  "entry_price": 672.0,
-  "peak_price": 673.002,
-  "qty_coin": 2577.467372709824,
-  "trade_count": 8,
-  "total_pnl": -767749.6457496765,
+  "coin": "pieverse",
+  "entry_price": 33832.0,
+  "peak_price": 33832.0,
+  "qty_coin": 49.476494649938665,
+  "trade_count": 9,
+  "total_pnl": -825925.4107238655,
   "profit_reserve": 0.0,
-  "deployed_capital": 1732250.3542503235,
+  "deployed_capital": 1674074.5892761345,
   "halted": false,
-  "entry_ts": 1789861906,
+  "entry_ts": 1789864495,
   "last_routine_notify_ts": 1789863289.0633736,
   "loss_cooldown": {
     "syn": 1789888822.0012436,
@@ -21,6 +21,7 @@
     "zama": 1789898474.5950143,
     "manta": 1789899221.0602672,
     "xtz": 1789900843.88107,
-    "avax": 1789908701.0669942
+    "avax": 1789908701.0669942,
+    "bank": 1789911288.3739586
   }
 }

@@ -327,6 +327,10 @@ def main():
         while cand_idx < len(candidates) and not entered:
             candidate = candidates[cand_idx]
             cand_idx += 1
+            fresh = load_slot(path, slot.slot_id)
+            if fresh.is_occupied:
+                print(f"[SKIP] slot {slot.slot_id}: already occupied by concurrent run", flush=True)
+                break
             handle_entry(slot, candidate, path)
             entered = slot.is_occupied
     return 0

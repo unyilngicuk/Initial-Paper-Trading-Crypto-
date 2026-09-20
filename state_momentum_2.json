@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "ena",
   "entry_price": 3862.0,
-  "peak_price": 3862.0,
+  "peak_price": 3912.0,
   "qty_coin": 657.9602990051505,
   "trade_count": 9,
   "total_pnl": 41324.761806451716,
@@ -12,7 +12,7 @@
   "deployed_capital": 2541324.7618064517,
   "halted": false,
   "entry_ts": 1789942594,
-  "last_routine_notify_ts": 1789938066.1893435,
+  "last_routine_notify_ts": 1789943356.9969904,
   "loss_cooldown": {
     "zama": 1789952327.6512876,
     "bank": 1789955434.004696,

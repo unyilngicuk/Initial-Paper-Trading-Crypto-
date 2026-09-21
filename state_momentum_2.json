@@ -2,16 +2,16 @@
   "slot_id": 2,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "trollsol",
-  "entry_price": 914.996,
-  "peak_price": 914.996,
-  "qty_coin": 2739.162264068773,
-  "trade_count": 11,
-  "total_pnl": 6600.7476568608545,
+  "coin": "zama",
+  "entry_price": 1609.416,
+  "peak_price": 1609.416,
+  "qty_coin": 1504.8177928680411,
+  "trade_count": 12,
+  "total_pnl": -77853.30879076477,
   "profit_reserve": 0.0,
-  "deployed_capital": 2506600.747656861,
+  "deployed_capital": 2422146.691209235,
   "halted": false,
-  "entry_ts": 1789954093,
+  "entry_ts": 1789968735,
   "last_routine_notify_ts": 1789967834.3165255,
   "loss_cooldown": {
     "zama": 1789952327.6512876,
@@ -23,6 +23,7 @@
     "asetqu": 1789980011.7655108,
     "arc": 1789989393.2500494,
     "ena": 1789993059.8391154,
-    "render": 1790000891.2348306
+    "render": 1790000891.2348306,
+    "trollsol": 1790015528.8978155
   }
 }

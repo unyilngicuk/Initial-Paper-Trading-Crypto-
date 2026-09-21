@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "zama",
   "entry_price": 1609.416,
-  "peak_price": 1696.115,
+  "peak_price": 1700.383,
   "qty_coin": 1504.8177928680411,
   "trade_count": 12,
   "total_pnl": -77853.30879076477,
@@ -12,7 +12,7 @@
   "deployed_capital": 2422146.691209235,
   "halted": false,
   "entry_ts": 1789968735,
-  "last_routine_notify_ts": 1789967834.3165255,
+  "last_routine_notify_ts": 1789972822.606694,
   "loss_cooldown": {
     "zama": 1789952327.6512876,
     "bank": 1789955434.004696,

@@ -12,10 +12,10 @@
   "deployed_capital": 2500000,
   "halted": false,
   "entry_ts": 1789992066,
-  "last_routine_notify_ts": 1790016437.6454036,
+  "last_routine_notify_ts": 1790020121.0260024,
   "loss_cooldown": {},
   "breakeven_active": false,
   "trail_active": false,
   "phase": "risk",
-  "scans_since_entry": 48
+  "scans_since_entry": 49
 }

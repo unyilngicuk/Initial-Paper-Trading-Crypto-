@@ -1,22 +1,27 @@
 from dataclasses import dataclass, field
 from typing import Optional, Tuple, Dict
 
-STRATEGY_FAMILY   = "PAK_OGAH_LITE"
-INITIAL_CAPITAL   = 2_500_000
+STRATEGY_FAMILY    = "PAK_OGAH_LITE_V2"
+INITIAL_CAPITAL    = 2_500_000
 PROTECTION_THRESHOLD = 3_000_000
 PROFIT_SWEEP_THRESHOLD = 0.10
-PROFIT_SWEEP_PCT  = 0.50
-HALT_THRESHOLD    = 0.60
-HARD_STOP_PCT     = 0.04
-TRAIL_PCT         = 0.07
-TRAIL_ACTIVATION_PCT = 0.10
-BREAKEVEN_PCT     = 0.04
-ROUNDTRIP_FEE_PCT = 0.0023
+PROFIT_SWEEP_PCT   = 0.50
+HALT_THRESHOLD     = 0.60
+ROUNDTRIP_FEE_PCT  = 0.0023
 COLLAPSE_THRESHOLD = 42
-MIN_VOL_IDR       = 100_000_000
-EXCLUDED_COINS    = {"btc", "eth", "tslax", "googlx", "nvdax"}
-COOLDOWN_HOURS    = 13
+MIN_VOL_IDR        = 100_000_000
+EXCLUDED_COINS     = {"btc", "eth", "tslax", "googlx", "nvdax"}
+COOLDOWN_HOURS     = 13
 PROFIT_COOLDOWN_EXEMPT = 0.13
+HARD_STOP_PCT        = 0.05
+EARLY_FAILURE_PCT    = 0.03
+EARLY_FAILURE_SCANS  = 5
+PROVEN_PCT           = 0.03
+BREAKEVEN_PCT        = 0.04
+TREND_RIDING_PCT     = 0.08
+TRAIL_PCT            = 0.07
+TRAIL_ACTIVATION_PCT = 0.10
+EMERGENCY_FLOOR_PCT  = 0.12
 
 @dataclass
 class PakOgahSlot:
@@ -37,6 +42,8 @@ class PakOgahSlot:
     loss_cooldown: dict = field(default_factory=dict)
     breakeven_active: bool = False
     trail_active: bool = False
+    phase: str = "risk"
+    scans_since_entry: int = 0
 
     @property
     def is_occupied(self):
@@ -159,18 +166,32 @@ def check_exit(slot, current_price, current_score):
         slot.peak_price = current_price
     peak = slot.peak_price
     gain = (current_price - entry) / entry
-    if gain >= BREAKEVEN_PCT:
-        slot.breakeven_active = True
-    if gain >= TRAIL_ACTIVATION_PCT and current_score >= COLLAPSE_THRESHOLD:
-        slot.trail_active = True
+    slot.scans_since_entry += 1
+    if slot.phase == "risk" and gain >= PROVEN_PCT:
+        slot.phase = "proven"
+    if slot.phase == "proven":
+        if gain >= BREAKEVEN_PCT:
+            slot.breakeven_active = True
+        if gain >= TREND_RIDING_PCT:
+            slot.phase = "trend_riding"
+    if slot.phase == "trend_riding":
+        if gain >= TRAIL_ACTIVATION_PCT and current_score >= COLLAPSE_THRESHOLD:
+            slot.trail_active = True
     if current_price <= entry * (1.0 - HARD_STOP_PCT):
-        return (f"hard stop ({HARD_STOP_PCT:.0%} below entry Rp {entry:,.0f}) @ Rp {current_price:,.0f}", "hard_stop")
+        return (f"hard stop ({HARD_STOP_PCT:.0%} below entry Rp {entry:,.0f}) @ Rp {current_price:,.0f} [phase: {slot.phase}]", "hard_stop")
+    if slot.phase == "risk" and slot.scans_since_entry <= EARLY_FAILURE_SCANS:
+        if gain <= -EARLY_FAILURE_PCT:
+            return (f"early failure (-{EARLY_FAILURE_PCT:.0%} in risk phase, scan {slot.scans_since_entry}) @ Rp {current_price:,.0f}", "early_failure")
     if current_score < COLLAPSE_THRESHOLD:
-        return (f"momentum collapse (score {current_score}/70) @ Rp {current_price:,.0f}", "momentum_collapse")
+        return (f"momentum collapse (score {current_score}/70) @ Rp {current_price:,.0f} [phase: {slot.phase}]", "momentum_collapse")
+    if slot.phase == "trend_riding":
+        emergency_floor = peak * (1.0 - EMERGENCY_FLOOR_PCT)
+        if current_price <= emergency_floor:
+            return (f"emergency floor ({EMERGENCY_FLOOR_PCT:.0%} from peak Rp {peak:,.0f}) @ Rp {current_price:,.0f}", "emergency_floor")
     if slot.breakeven_active:
         breakeven = entry * (1.0 + ROUNDTRIP_FEE_PCT)
         if current_price <= breakeven:
-            return (f"breakeven stop (Rp {breakeven:,.0f}) @ Rp {current_price:,.0f}", "breakeven_stop")
+            return (f"breakeven stop (Rp {breakeven:,.0f}) @ Rp {current_price:,.0f} [phase: {slot.phase}]", "breakeven_stop")
     if slot.trail_active and current_price <= peak * (1.0 - TRAIL_PCT):
-        return (f"trailing stop ({TRAIL_PCT:.0%} from peak Rp {peak:,.0f}) @ Rp {current_price:,.0f}", "trailing_stop")
+        return (f"trailing stop ({TRAIL_PCT:.0%} from peak Rp {peak:,.0f}) @ Rp {current_price:,.0f} [phase: {slot.phase}]", "trailing_stop")
     return None, None

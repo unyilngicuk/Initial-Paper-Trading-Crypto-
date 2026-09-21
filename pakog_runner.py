@@ -3,10 +3,10 @@ from dataclasses import asdict
 from datetime import datetime, timezone
 from strategy_pakog import (
     COLLAPSE_THRESHOLD, COOLDOWN_HOURS, EXCLUDED_COINS,
-    HALT_THRESHOLD, HARD_STOP_PCT, INITIAL_CAPITAL,
-    MIN_VOL_IDR, PROFIT_COOLDOWN_EXEMPT, PROFIT_SWEEP_PCT,
+    HALT_THRESHOLD, INITIAL_CAPITAL, MIN_VOL_IDR,
+    PROFIT_COOLDOWN_EXEMPT, PROFIT_SWEEP_PCT,
     PROFIT_SWEEP_THRESHOLD, PROTECTION_THRESHOLD,
-    ROUNDTRIP_FEE_PCT, TRAIL_PCT,
+    ROUNDTRIP_FEE_PCT, TRAIL_PCT, EMERGENCY_FLOOR_PCT,
     PakOgahSlot, check_exit, compute_score,
 )
 
@@ -15,9 +15,10 @@ SLOT_STATE_PATHS = [
     os.environ.get("SLOT_2_STATE_PATH", "state_pakog_2.json"),
 ]
 INDODAX_BASE = "https://indodax.com"
-UA = "unyil-pakog-lite/1.0"
+UA = "unyil-pakog-lite-v2/1.0"
 ROUTINE_NOTIFY_THROTTLE_SECONDS = int(os.environ.get("ROUTINE_NOTIFY_THROTTLE_SECONDS", 3600))
 SEP = "\u2500" * 28
+PHASE_LABELS = {"risk": "Risk \U0001f6a8", "proven": "Proven \u2705", "trend_riding": "Trend-Riding \U0001f680"}
 
 def notify(message):
     print(f"[NOTIFY] {message}", flush=True)
@@ -57,6 +58,8 @@ def load_slot(path, slot_id):
     d.setdefault("deployed_capital", 0.0)
     d.setdefault("breakeven_active", False)
     d.setdefault("trail_active", False)
+    d.setdefault("phase", "risk")
+    d.setdefault("scans_since_entry", 0)
     return PakOgahSlot(**d)
 
 def save_slot(slot, path):
@@ -97,7 +100,7 @@ def scan_and_score(summaries, already_held, slots):
             continue
         pair_key = pair_id.replace("_", "")
         p24h = prices_24h.get(pair_key)
-        p7d = prices_7d.get(pair_key)
+        p7d  = prices_7d.get(pair_key)
         if not p24h or not p7d:
             rejected["no_data"] += 1
             continue
@@ -115,26 +118,20 @@ def scan_and_score(summaries, already_held, slots):
             continue
         rejected["scored"] += 1
         candidates.append({
-            "coin": coin,
-            "score": total,
-            "scores": scores,
+            "coin": coin, "score": total, "scores": scores,
             "current_price": float(ticker.get("last", 0)),
-            "vol_idr": vol_idr,
-            "ticker": ticker,
-            "price_24h": float(p24h),
-            "price_7d": float(p7d),
+            "vol_idr": vol_idr, "ticker": ticker,
+            "price_24h": float(p24h), "price_7d": float(p7d),
         })
     candidates.sort(key=lambda x: x["score"], reverse=True)
     total_pairs = len([k for k in tickers if k.endswith("_idr")])
-    top_str = ", ".join(
-        c["coin"].upper() + "(" + str(c["score"]) + "/70)"
-        for c in candidates[:5]) or "none"
+    top_str = ", ".join(c["coin"].upper()+"("+str(c["score"])+"/70)" for c in candidates[:5]) or "none"
     log_lines = [
-        f"[PAK OGAH SCAN] {total_pairs} IDR pairs",
-        f"  excluded/held:   {rejected['excluded']}",
-        f"  below Rp100M:    {rejected['low_volume']}",
-        f"  no data:         {rejected['no_data']}",
-        f"  scored:          {rejected['scored']}",
+        f"[PAK OGAH v2 SCAN] {total_pairs} IDR pairs",
+        f"  excluded/held:  {rejected['excluded']}",
+        f"  below Rp100M:   {rejected['low_volume']}",
+        f"  no data:        {rejected['no_data']}",
+        f"  scored:         {rejected['scored']}",
         f"  top: {top_str}",
     ]
     for line in log_lines:
@@ -145,7 +142,16 @@ def scan_and_score(summaries, already_held, slots):
     return candidates
 
 def handle_exit(slot, current_price, current_score, path):
+    prev_phase = slot.phase
     reason, exit_type = check_exit(slot, current_price, current_score)
+    if slot.phase != prev_phase:
+        notify(
+            f"[PAK OGAH v2 slot {slot.slot_id}] PHASE TRANSITION\n"
+            f"Coin: {slot.coin.upper()}\n"
+            f"{prev_phase.upper()} \u2192 {slot.phase.upper()}\n"
+            f"Price: Rp {current_price:,.0f}\n"
+            f"Score: {current_score}/70"
+        )
     if not exit_type:
         return False
     invested = slot.deployed_capital if slot.deployed_capital > 0 else slot.initial_capital
@@ -178,15 +184,15 @@ def handle_exit(slot, current_price, current_score, path):
     slot.entry_price = 0.0
     slot.peak_price = 0.0
     slot.entry_ts = 0
+    slot.phase = "risk"
+    slot.scans_since_entry = 0
     if slot.is_halted_by_loss:
         slot.halted = True
     save_slot(slot, path)
-    swept_line = (f"\nReserve this trade: Rp {swept:,.0f}\nTotal reserve: Rp {slot.profit_reserve:,.0f}"
-                  if swept > 0 else "")
-    halt_warning = (f"\nSLOT HALTED: balance Rp {slot.balance:,.0f} -- 40% loss reached."
-                    if slot.halted else "")
+    swept_line = (f"\nReserve this trade: Rp {swept:,.0f}\nTotal reserve: Rp {slot.profit_reserve:,.0f}" if swept > 0 else "")
+    halt_warning = (f"\nSLOT HALTED: balance Rp {slot.balance:,.0f} -- 40% loss reached." if slot.halted else "")
     notify(
-        f"[PAK OGAH slot {slot.slot_id}] EXIT -- {coin.upper()}\n"
+        f"[PAK OGAH v2 slot {slot.slot_id}] EXIT -- {coin.upper()}\n"
         f"Reason: {reason}\n"
         f"Trade P&L: Rp {trade_pnl:+,.0f} ({trade_pct:+.2f}%)\n"
         f"Score at exit: {current_score}/70\n"
@@ -223,40 +229,44 @@ def handle_entry(slot, candidate, path):
     slot.entry_ts = int(time.time())
     slot.breakeven_active = False
     slot.trail_active = False
+    slot.phase = "risk"
+    slot.scans_since_entry = 0
     save_slot(slot, path)
     gain_24h = (price - candidate["price_24h"]) / candidate["price_24h"]
-    gain_7d = (price - candidate["price_7d"]) / candidate["price_7d"]
-    scores_str = " | ".join(k + ":" + str(v) for k, v in candidate["scores"].items())
+    gain_7d  = (price - candidate["price_7d"])  / candidate["price_7d"]
+    scores_str = " | ".join(k+":"+str(v) for k, v in candidate["scores"].items())
+    now_utc = datetime.now(timezone.utc).strftime("%H:%M:%S UTC")
     notify(
-        f"[PAK OGAH slot {slot.slot_id}] ENTRY [PAPER TRADE] {__import__('datetime').datetime.utcnow().strftime('%H:%M:%S UTC')}\n"
+        f"[PAK OGAH v2 slot {slot.slot_id}] ENTRY [PAPER TRADE] {now_utc}\n"
         f"Coin: {coin.upper()}\n"
         f"Score: {score}/70\n"
         f"24h: {gain_24h:+.1%} | 7d: {gain_7d:+.1%}\n"
         f"Entry: Rp {price:,.0f} | Vol: Rp {candidate['vol_idr']/1e6:.0f}M\n"
         f"Qty: {qty:.4f} {coin.upper()}\n"
-        f"Capital deployed: Rp {slot.deployed_capital:,.0f}\n"
-        f"Total reserve: Rp {slot.profit_reserve:,.0f}\n"
-        f"Exits: hard 4% | breakeven at +4% | trail 7% at +10%\n"
+        f"Capital: Rp {slot.deployed_capital:,.0f} | Reserve: Rp {slot.profit_reserve:,.0f}\n"
+        f"Phase: Risk \U0001f6a8 | Hard stop: 5% | Early failure: 3% (first 5 scans)\n"
+        f"Proven at +3% | Breakeven at +4% | Trend-Riding at +8%\n"
+        f"Trail -7% at +10% | Emergency floor -12% from peak\n"
         f"Scores: {scores_str}"
     )
 
 def main():
-    print(f"[PAK OGAH] {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}", flush=True)
+    print(f"[PAK OGAH v2] {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}", flush=True)
     slots = [load_slot(path, i+1) for i, path in enumerate(SLOT_STATE_PATHS)]
     if all(s.halted or s.is_halted_by_loss for s in slots):
-        notify("[PAK OGAH] Both slots halted -- no action.")
+        notify("[PAK OGAH v2] Both slots halted -- no action.")
         return 0
     try:
         summaries = fetch_summaries()
     except Exception as e:
-        notify(f"[PAK OGAH] Could not fetch market data: {e}. Skipping.")
+        notify(f"[PAK OGAH v2] Could not fetch market data: {e}. Skipping.")
         return 0
     for slot, path in zip(slots, SLOT_STATE_PATHS):
         if slot.halted or slot.is_halted_by_loss or not slot.is_occupied:
             continue
         current_price = fetch_current_price(slot.coin)
         if current_price <= 0:
-            notify(f"[PAK OGAH slot {slot.slot_id}] Price fetch failed for {slot.coin.upper()}.")
+            notify(f"[PAK OGAH v2 slot {slot.slot_id}] Price fetch failed for {slot.coin.upper()}.")
             continue
         tickers = summaries.get("tickers", {})
         prices_24h = summaries.get("prices_24h", {})
@@ -264,25 +274,25 @@ def main():
         ticker = tickers.get(f"{slot.coin}_idr", {})
         pair_key = f"{slot.coin}idr"
         p24h = prices_24h.get(pair_key, 0)
-        p7d = prices_7d.get(pair_key, 0)
+        p7d  = prices_7d.get(pair_key, 0)
         current_score, _ = compute_score(ticker, p24h, p7d) if ticker else (0, {})
         equity = slot.qty_coin * current_price
         deployed = slot.deployed_capital if slot.deployed_capital > 0 else slot.initial_capital
         trade_pct = (equity - deployed) / deployed * 100 if deployed > 0 else 0.0
         exited = handle_exit(slot, current_price, current_score, path)
         if not exited:
+            phase_str = PHASE_LABELS.get(slot.phase, slot.phase)
             notify_throttled(slot,
-                f"[PAK OGAH slot {slot.slot_id}] Check-in\n"
+                f"[PAK OGAH v2 slot {slot.slot_id}] Check-in\n"
                 f"Coin: {slot.coin.upper()}\n"
                 f"Price: Rp {current_price:,.0f}\n"
                 f"Score: {current_score}/70\n"
+                f"Phase: {phase_str} | Scan #{slot.scans_since_entry}\n"
                 f"Trade: Rp {equity:,.0f} ({trade_pct:+.2f}%) | Peak: Rp {slot.peak_price:,.0f}\n"
                 f"Total reserve: Rp {slot.profit_reserve:,.0f}\n"
                 f"Action: holding")
             save_slot(slot, path)
-    candidates = scan_and_score(summaries,
-                                already_held={s.coin for s in slots if s.coin},
-                                slots=slots)
+    candidates = scan_and_score(summaries, already_held={s.coin for s in slots if s.coin}, slots=slots)
     cand_idx = 0
     for slot, path in zip(slots, SLOT_STATE_PATHS):
         if slot.halted or slot.is_halted_by_loss or slot.is_occupied:
@@ -290,7 +300,7 @@ def main():
         if cand_idx >= len(candidates):
             scan_summary = getattr(slot, "_scan_summary", "")
             notify_throttled(slot,
-                f"[PAK OGAH slot {slot.slot_id}] Check-in\n"
+                f"[PAK OGAH v2 slot {slot.slot_id}] Check-in\n"
                 f"Status: empty\n"
                 f"Balance: Rp {slot.balance:,.0f} | Reserve: Rp {slot.profit_reserve:,.0f}\n"
                 f"{scan_summary}")
@@ -300,8 +310,6 @@ def main():
         while cand_idx < len(candidates) and not entered:
             candidate = candidates[cand_idx]
             cand_idx += 1
-            # Re-read state file right before entry to catch
-            # concurrent runs that may have already entered
             fresh = load_slot(path, slot.slot_id)
             if fresh.is_occupied:
                 print(f"[SKIP] slot {slot.slot_id}: already occupied by concurrent run", flush=True)

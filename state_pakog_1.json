@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "sui",
   "entry_price": 18000.0,
-  "peak_price": 18435.0,
+  "peak_price": 18626.0,
   "qty_coin": 138.87347222222223,
   "trade_count": 0,
   "total_pnl": 0.0,
@@ -12,10 +12,10 @@
   "deployed_capital": 2500000,
   "halted": false,
   "entry_ts": 1789992066,
-  "last_routine_notify_ts": 1789992118.3108597,
+  "last_routine_notify_ts": 1789996205.2435253,
   "loss_cooldown": {},
   "breakeven_active": false,
   "trail_active": false,
-  "phase": "risk",
-  "scans_since_entry": 6
+  "phase": "proven",
+  "scans_since_entry": 7
 }

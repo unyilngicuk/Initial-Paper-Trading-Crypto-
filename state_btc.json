@@ -4,7 +4,6 @@
   "hold_coin": 0.0,
   "hold_bought": false,
   "closes": [
-    1130900000.0,
     1131797000.0,
     1130903000.0,
     1132296000.0,
@@ -4903,7 +4902,8 @@
     1499000000.0,
     1499909000.0,
     1507260000.0,
-    1510020000.0
+    1510020000.0,
+    1510022000.0
   ],
   "lots": [
     {
@@ -4912,14 +4912,14 @@
       "qty_coin": 0.0007231204375075032,
       "entry_price": 1382742000.0,
       "entry_ts": 1789722900,
-      "peak_price": 1510020000.0
+      "peak_price": 1510022000.0
     }
   ],
   "next_lot_id": 2,
   "anchor": null,
-  "peak_equity": 1091926.3230450798,
+  "peak_equity": 1091927.769285955,
   "halted": false,
-  "bars_seen": 5474,
+  "bars_seen": 5475,
   "risk_frac": 1.0,
   "trade_history": [],
   "consecutive_losses": 0,
@@ -4933,5 +4933,5 @@
   "adaptive_log": [],
   "cooldown_until_ts": null,
   "true_max_dd": 0.019823252655845947,
-  "last_routine_notify_ts": 1789987845.0602252
+  "last_routine_notify_ts": 1789995264.9319973
 }

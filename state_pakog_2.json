@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "arc",
   "entry_price": 1319.0,
-  "peak_price": 1361.0,
+  "peak_price": 1380.0,
   "qty_coin": 1541.9785848572944,
   "trade_count": 4,
   "total_pnl": -465904.46196850715,
@@ -19,6 +19,6 @@
     "ava": 1789987292.5093439,
     "near": 1790000451.3769681
   },
-  "breakeven_active": false,
+  "breakeven_active": true,
   "trail_active": false
 }

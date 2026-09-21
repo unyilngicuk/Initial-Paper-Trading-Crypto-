@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "uai",
   "entry_price": 7851.0,
-  "peak_price": 7964.0,
+  "peak_price": 7986.0,
   "qty_coin": 288.45807784584844,
   "trade_count": 8,
   "total_pnl": -235064.22296099225,
@@ -12,7 +12,7 @@
   "deployed_capital": 2264935.7770390077,
   "halted": false,
   "entry_ts": 1789965224,
-  "last_routine_notify_ts": 1789962506.468558,
+  "last_routine_notify_ts": 1789966772.2484965,
   "loss_cooldown": {
     "manta": 1789957777.0706787,
     "avax": 1789958509.4752862,

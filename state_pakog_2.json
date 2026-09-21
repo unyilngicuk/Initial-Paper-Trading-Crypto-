@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "arc",
   "entry_price": 1319.0,
-  "peak_price": 1339.0,
+  "peak_price": 1361.0,
   "qty_coin": 1541.9785848572944,
   "trade_count": 4,
   "total_pnl": -465904.46196850715,
@@ -12,7 +12,7 @@
   "deployed_capital": 2034095.5380314928,
   "halted": false,
   "entry_ts": 1789953652,
-  "last_routine_notify_ts": 1789972264.747777,
+  "last_routine_notify_ts": 1789976124.2379105,
   "loss_cooldown": {
     "hbar": 1789969149.2640603,
     "algo": 1789981733.9549472,

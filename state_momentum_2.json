@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "doge",
   "entry_price": 1711.0,
-  "peak_price": 1786.0,
+  "peak_price": 1790.0,
   "qty_coin": 1502.9500772834147,
   "trade_count": 13,
   "total_pnl": 71833.05570110539,
@@ -12,7 +12,7 @@
   "deployed_capital": 2571833.0557011054,
   "halted": false,
   "entry_ts": 1790009738,
-  "last_routine_notify_ts": 1790028445.9498527,
+  "last_routine_notify_ts": 1790032168.8028882,
   "loss_cooldown": {
     "zama": 1790056537.071144,
     "bank": 1789955434.004696,

@@ -12,7 +12,7 @@
   "deployed_capital": 2407970.885734871,
   "halted": false,
   "entry_ts": 1790058149,
-  "last_routine_notify_ts": 1790078126.1467223,
+  "last_routine_notify_ts": 1790081902.2907093,
   "loss_cooldown": {
     "sui": 1790089212.3210826,
     "fet": 1790104948.1118612
@@ -20,5 +20,5 @@
   "breakeven_active": false,
   "trail_active": false,
   "phase": "proven",
-  "scans_since_entry": 38
+  "scans_since_entry": 39
 }

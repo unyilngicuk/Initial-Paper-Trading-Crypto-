@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "fet",
   "entry_price": 3581.0,
-  "peak_price": 3612.0,
+  "peak_price": 3658.0,
   "qty_coin": 684.1048714011815,
   "trade_count": 1,
   "total_pnl": -49948.49979584664,
@@ -19,5 +19,5 @@
   "breakeven_active": false,
   "trail_active": false,
   "phase": "risk",
-  "scans_since_entry": 3
+  "scans_since_entry": 4
 }

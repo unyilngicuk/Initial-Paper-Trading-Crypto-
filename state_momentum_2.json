@@ -2,16 +2,16 @@
   "slot_id": 2,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "sui",
-  "entry_price": 18336.0,
-  "peak_price": 19112.0,
-  "qty_coin": 139.00827018954007,
-  "trade_count": 14,
-  "total_pnl": 49138.596579627134,
+  "coin": "useless",
+  "entry_price": 4977.0,
+  "peak_price": 4977.0,
+  "qty_coin": 511.5888750016862,
+  "trade_count": 15,
+  "total_pnl": 46460.48799755983,
   "profit_reserve": 0.0,
-  "deployed_capital": 2549138.596579627,
+  "deployed_capital": 2546460.48799756,
   "halted": false,
-  "entry_ts": 1790033782,
+  "entry_ts": 1790040587,
   "last_routine_notify_ts": 1790039746.6337934,
   "loss_cooldown": {
     "zama": 1790056537.071144,
@@ -25,6 +25,7 @@
     "ena": 1789993059.8391154,
     "render": 1790000891.2348306,
     "trollsol": 1790015528.8978155,
-    "doge": 1790080579.6776645
+    "doge": 1790080579.6776645,
+    "sui": 1790087384.7018487
   }
 }

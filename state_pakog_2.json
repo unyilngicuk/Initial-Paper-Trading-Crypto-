@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "pengu",
   "entry_price": 177.413,
-  "peak_price": 177.413,
+  "peak_price": 177.58,
   "qty_coin": 14243.021648959122,
   "trade_count": 2,
   "total_pnl": 27177.716533320025,
@@ -20,5 +20,5 @@
   "breakeven_active": false,
   "trail_active": false,
   "phase": "risk",
-  "scans_since_entry": 0
+  "scans_since_entry": 1
 }

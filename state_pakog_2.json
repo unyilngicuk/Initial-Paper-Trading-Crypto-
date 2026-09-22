@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "ada",
   "entry_price": 4281.0,
-  "peak_price": 4388.0,
+  "peak_price": 4409.0,
   "qty_coin": 583.9108853071713,
   "trade_count": 0,
   "total_pnl": 0.0,
@@ -17,5 +17,5 @@
   "breakeven_active": false,
   "trail_active": false,
   "phase": "risk",
-  "scans_since_entry": 104
+  "scans_since_entry": 105
 }

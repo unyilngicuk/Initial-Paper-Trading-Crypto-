@@ -2,22 +2,23 @@
   "slot_id": 1,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "fet",
-  "entry_price": 3581.0,
-  "peak_price": 3658.0,
-  "qty_coin": 684.1048714011815,
-  "trade_count": 1,
-  "total_pnl": -49948.49979584664,
+  "coin": "fartcoin",
+  "entry_price": 3525.0,
+  "peak_price": 3525.0,
+  "qty_coin": 683.0364825437034,
+  "trade_count": 2,
+  "total_pnl": -92029.11426512897,
   "profit_reserve": 0.0,
-  "deployed_capital": 2450051.5002041534,
+  "deployed_capital": 2407970.885734871,
   "halted": false,
-  "entry_ts": 1790042413,
+  "entry_ts": 1790058149,
   "last_routine_notify_ts": 1790055150.4120903,
   "loss_cooldown": {
-    "sui": 1790089212.3210826
+    "sui": 1790089212.3210826,
+    "fet": 1790104948.1118612
   },
   "breakeven_active": false,
   "trail_active": false,
   "phase": "risk",
-  "scans_since_entry": 26
+  "scans_since_entry": 0
 }

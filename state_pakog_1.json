@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "trollsol",
   "entry_price": 1063.921,
-  "peak_price": 1070.069,
+  "peak_price": 1070.133,
   "qty_coin": 2261.732858349264,
   "trade_count": 4,
   "total_pnl": -93427.78609644901,
@@ -22,5 +22,5 @@
   "breakeven_active": false,
   "trail_active": false,
   "phase": "risk",
-  "scans_since_entry": 2
+  "scans_since_entry": 3
 }

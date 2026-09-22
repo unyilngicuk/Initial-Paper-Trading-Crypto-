@@ -2,16 +2,16 @@
   "slot_id": 2,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "fet",
-  "entry_price": 3612.0,
-  "peak_price": 3658.0,
-  "qty_coin": 679.6263197246046,
-  "trade_count": 16,
-  "total_pnl": -44917.21896603331,
+  "coin": "syn",
+  "entry_price": 4240.0,
+  "peak_price": 4240.0,
+  "qty_coin": 573.8911849006871,
+  "trade_count": 17,
+  "total_pnl": -66431.24988982454,
   "profit_reserve": 0.0,
-  "deployed_capital": 2455082.7810339667,
+  "deployed_capital": 2433568.7501101755,
   "halted": false,
-  "entry_ts": 1790044424,
+  "entry_ts": 1790046752,
   "last_routine_notify_ts": 1790043604.22306,
   "loss_cooldown": {
     "zama": 1790056537.071144,
@@ -27,6 +27,7 @@
     "trollsol": 1790015528.8978155,
     "doge": 1790080579.6776645,
     "sui": 1790087384.7018487,
-    "useless": 1790091220.2887576
+    "useless": 1790091220.2887576,
+    "fet": 1790093548.0719852
   }
 }

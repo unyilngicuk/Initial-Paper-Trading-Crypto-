@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "doge",
   "entry_price": 1750.0,
-  "peak_price": 1783.0,
+  "peak_price": 1788.0,
   "qty_coin": 1424.6364594322395,
   "trade_count": 1,
   "total_pnl": -6609.42964027077,
@@ -12,12 +12,12 @@
   "deployed_capital": 2493390.570359729,
   "halted": false,
   "entry_ts": 1790055152,
-  "last_routine_notify_ts": 1790078474.7421627,
+  "last_routine_notify_ts": 1790082473.3477495,
   "loss_cooldown": {
     "ada": 1790101951.859004
   },
   "breakeven_active": false,
   "trail_active": false,
   "phase": "risk",
-  "scans_since_entry": 44
+  "scans_since_entry": 45
 }

@@ -2,16 +2,16 @@
   "slot_id": 2,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "aioz",
-  "entry_price": 2332.0,
-  "peak_price": 2332.0,
-  "qty_coin": 976.3307462754485,
-  "trade_count": 21,
-  "total_pnl": -222943.94646371156,
+  "coin": "conx",
+  "entry_price": 416265.0,
+  "peak_price": 416265.0,
+  "qty_coin": 5.070347719789334,
+  "trade_count": 22,
+  "total_pnl": -389157.4028936145,
   "profit_reserve": 0.0,
-  "deployed_capital": 2277056.0535362884,
+  "deployed_capital": 2110842.5971063855,
   "halted": false,
-  "entry_ts": 1790103788,
+  "entry_ts": 1790104704,
   "last_routine_notify_ts": 1790101398.93548,
   "loss_cooldown": {
     "zama": 1790056537.071144,
@@ -30,6 +30,7 @@
     "useless": 1790150587.581439,
     "fet": 1790093548.0719852,
     "syn": 1790126725.0160458,
-    "wif": 1790146893.6828647
+    "wif": 1790146893.6828647,
+    "aioz": 1790151501.8501847
   }
 }

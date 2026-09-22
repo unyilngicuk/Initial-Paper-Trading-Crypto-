@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "fartcoin",
   "entry_price": 3525.0,
-  "peak_price": 3525.0,
+  "peak_price": 3625.0,
   "qty_coin": 683.0364825437034,
   "trade_count": 2,
   "total_pnl": -92029.11426512897,
@@ -12,7 +12,7 @@
   "deployed_capital": 2407970.885734871,
   "halted": false,
   "entry_ts": 1790058149,
-  "last_routine_notify_ts": 1790055150.4120903,
+  "last_routine_notify_ts": 1790059091.90556,
   "loss_cooldown": {
     "sui": 1790089212.3210826,
     "fet": 1790104948.1118612
@@ -20,5 +20,5 @@
   "breakeven_active": false,
   "trail_active": false,
   "phase": "risk",
-  "scans_since_entry": 0
+  "scans_since_entry": 1
 }

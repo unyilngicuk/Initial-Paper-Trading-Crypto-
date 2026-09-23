@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "conx",
   "entry_price": 457049.0,
-  "peak_price": 457049.0,
+  "peak_price": 457499.0,
   "qty_coin": 5.635621892988333,
   "trade_count": 14,
   "total_pnl": 76041.29115174199,
@@ -12,7 +12,7 @@
   "deployed_capital": 2576041.291151742,
   "halted": false,
   "entry_ts": 1790159281,
-  "last_routine_notify_ts": 1790154958.4471624,
+  "last_routine_notify_ts": 1790160169.3369865,
   "loss_cooldown": {
     "manta": 1789957777.0706787,
     "avax": 1789958509.4752862,

@@ -12,7 +12,7 @@
   "deployed_capital": 2377234.423004273,
   "halted": false,
   "entry_ts": 1790166265,
-  "last_routine_notify_ts": 1790165132.994433,
+  "last_routine_notify_ts": 1790169155.503184,
   "loss_cooldown": {
     "ada": 1790101951.859004,
     "doge": 1790162278.7821524,
@@ -24,5 +24,5 @@
   "breakeven_active": false,
   "trail_active": false,
   "phase": "risk",
-  "scans_since_entry": 3
+  "scans_since_entry": 4
 }

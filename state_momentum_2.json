@@ -2,16 +2,16 @@
   "slot_id": 2,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "beat",
-  "entry_price": 1682.0,
-  "peak_price": 1682.0,
-  "qty_coin": 972.6014219116245,
-  "trade_count": 35,
-  "total_pnl": -863902.8015556203,
+  "coin": "lighter",
+  "entry_price": 95000.0,
+  "peak_price": 95000.0,
+  "qty_coin": 16.627136352536223,
+  "trade_count": 36,
+  "total_pnl": -920246.693892081,
   "profit_reserve": 0.0,
-  "deployed_capital": 1636097.1984443797,
+  "deployed_capital": 1579753.306107919,
   "halted": false,
-  "entry_ts": 1790166236,
+  "entry_ts": 1790171773,
   "last_routine_notify_ts": 1790168205.806657,
   "loss_cooldown": {
     "zama": 1790056537.071144,
@@ -43,6 +43,7 @@
     "coti": 1790206079.7425802,
     "aevo": 1790209445.529914,
     "glidr": 1790210302.629461,
-    "tia": 1790213034.7529945
+    "tia": 1790213034.7529945,
+    "beat": 1790218572.031668
   }
 }

@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "met",
   "entry_price": 6005.0,
-  "peak_price": 6092.0,
+  "peak_price": 6325.0,
   "qty_coin": 340.7656806474358,
   "trade_count": 18,
   "total_pnl": -453474.92342864885,
@@ -12,7 +12,7 @@
   "deployed_capital": 2046525.0765713512,
   "halted": false,
   "entry_ts": 1790185832,
-  "last_routine_notify_ts": 1790183478.782924,
+  "last_routine_notify_ts": 1790187701.8052716,
   "loss_cooldown": {
     "manta": 1789957777.0706787,
     "avax": 1789958509.4752862,

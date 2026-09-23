@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "uni",
   "entry_price": 186000.0,
-  "peak_price": 187000.0,
+  "peak_price": 188599.0,
   "qty_coin": 11.053222159266207,
   "trade_count": 26,
   "total_pnl": -443872.4482182376,
@@ -12,7 +12,7 @@
   "deployed_capital": 2056127.5517817624,
   "halted": false,
   "entry_ts": 1790140037,
-  "last_routine_notify_ts": 1790137682.0698352,
+  "last_routine_notify_ts": 1790141734.7917278,
   "loss_cooldown": {
     "zama": 1790056537.071144,
     "bank": 1789955434.004696,

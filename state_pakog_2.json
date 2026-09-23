@@ -2,23 +2,24 @@
   "slot_id": 2,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "pengu",
-  "entry_price": 177.413,
-  "peak_price": 197.23,
-  "qty_coin": 14243.021648959122,
-  "trade_count": 2,
-  "total_pnl": 27177.716533320025,
+  "coin": "uai",
+  "entry_price": 7170.0,
+  "peak_price": 7170.0,
+  "qty_coin": 362.8684218906869,
+  "trade_count": 3,
+  "total_pnl": 102055.41310707992,
   "profit_reserve": 0.0,
-  "deployed_capital": 2527177.71653332,
+  "deployed_capital": 2602055.41310708,
   "halted": false,
-  "entry_ts": 1790115479,
+  "entry_ts": 1790160775,
   "last_routine_notify_ts": 1790156694.13497,
   "loss_cooldown": {
     "ada": 1790101951.859004,
-    "doge": 1790162278.7821524
+    "doge": 1790162278.7821524,
+    "pengu": 1790207574.578709
   },
-  "breakeven_active": true,
-  "trail_active": true,
-  "phase": "trend_riding",
-  "scans_since_entry": 77
+  "breakeven_active": false,
+  "trail_active": false,
+  "phase": "risk",
+  "scans_since_entry": 0
 }

@@ -2,16 +2,16 @@
   "slot_id": 1,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "fartcoin",
-  "entry_price": 3175.0,
-  "peak_price": 3859.0,
-  "qty_coin": 723.4652952037122,
-  "trade_count": 11,
-  "total_pnl": -202742.69216704415,
+  "coin": "mubarak",
+  "entry_price": 1147.724,
+  "peak_price": 1147.724,
+  "qty_coin": 2253.720231517643,
+  "trade_count": 12,
+  "total_pnl": 86935.94888868136,
   "profit_reserve": 0.0,
-  "deployed_capital": 2297257.307832956,
+  "deployed_capital": 2586935.9488886814,
   "halted": false,
-  "entry_ts": 1789987226,
+  "entry_ts": 1790153920,
   "last_routine_notify_ts": 1790150379.0156708,
   "loss_cooldown": {
     "manta": 1789957777.0706787,
@@ -24,6 +24,7 @@
     "sui": 1790012020.867465,
     "uai": 1790015527.4883657,
     "ern": 1790031386.393722,
-    "trollsol": 1790034024.24482
+    "trollsol": 1790034024.24482,
+    "fartcoin": 1790200717.4491422
   }
 }

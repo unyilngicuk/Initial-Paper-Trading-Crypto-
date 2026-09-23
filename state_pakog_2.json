@@ -2,16 +2,16 @@
   "slot_id": 2,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "ub",
-  "entry_price": 2782.0,
-  "peak_price": 2782.0,
-  "qty_coin": 599.2188879656375,
-  "trade_count": 11,
-  "total_pnl": -832787.9931468361,
+  "coin": "bnkr",
+  "entry_price": 6.897,
+  "peak_price": 6.897,
+  "qty_coin": 229679.85488610066,
+  "trade_count": 12,
+  "total_pnl": -915722.1860132113,
   "profit_reserve": 0.0,
-  "deployed_capital": 1667212.006853164,
+  "deployed_capital": 1584277.8139867887,
   "halted": false,
-  "entry_ts": 1790181862,
+  "entry_ts": 1790184056,
   "last_routine_notify_ts": 1790182382.5567138,
   "loss_cooldown": {
     "ada": 1790101951.859004,
@@ -24,10 +24,11 @@
     "ace": 1790220293.8153486,
     "move": 1790222197.2095864,
     "lighter": 1790227179.895861,
-    "wealth": 1790228661.3026266
+    "wealth": 1790228661.3026266,
+    "ub": 1790230855.560234
   },
   "breakeven_active": false,
   "trail_active": false,
   "phase": "risk",
-  "scans_since_entry": 3
+  "scans_since_entry": 0
 }

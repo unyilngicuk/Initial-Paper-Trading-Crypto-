@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "tia",
   "entry_price": 9150.0,
-  "peak_price": 9150.0,
+  "peak_price": 9241.0,
   "qty_coin": 182.49153092669334,
   "trade_count": 34,
   "total_pnl": -830017.1239215112,
@@ -12,7 +12,7 @@
   "deployed_capital": 1669982.8760784888,
   "halted": false,
   "entry_ts": 1790163505,
-  "last_routine_notify_ts": 1790160171.0976324,
+  "last_routine_notify_ts": 1790164264.1286407,
   "loss_cooldown": {
     "zama": 1790056537.071144,
     "bank": 1789955434.004696,

@@ -2,16 +2,16 @@
   "slot_id": 2,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "glidr",
-  "entry_price": 1397.997,
-  "peak_price": 1397.997,
-  "qty_coin": 1301.58063084635,
-  "trade_count": 33,
-  "total_pnl": -680192.1841511361,
+  "coin": "tia",
+  "entry_price": 9150.0,
+  "peak_price": 9150.0,
+  "qty_coin": 182.49153092669334,
+  "trade_count": 34,
+  "total_pnl": -830017.1239215112,
   "profit_reserve": 0.0,
-  "deployed_capital": 1819807.815848864,
+  "deployed_capital": 1669982.8760784888,
   "halted": false,
-  "entry_ts": 1790162647,
+  "entry_ts": 1790163505,
   "last_routine_notify_ts": 1790160171.0976324,
   "loss_cooldown": {
     "zama": 1790056537.071144,
@@ -41,6 +41,7 @@
     "uai": 1790200718.9201994,
     "inj": 1790203544.7533886,
     "coti": 1790206079.7425802,
-    "aevo": 1790209445.529914
+    "aevo": 1790209445.529914,
+    "glidr": 1790210302.629461
   }
 }

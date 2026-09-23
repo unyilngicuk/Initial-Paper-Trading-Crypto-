@@ -1,17 +1,17 @@
 {
   "slot_id": 1,
   "initial_capital": 2500000,
-  "balance": 0.0,
-  "coin": "lighter",
-  "entry_price": 92933.0,
-  "peak_price": 96296.0,
-  "qty_coin": 25.290177719395984,
-  "trade_count": 15,
-  "total_pnl": -149447.00262066396,
+  "balance": 2339713.8520851536,
+  "coin": null,
+  "entry_price": 0.0,
+  "peak_price": 0.0,
+  "qty_coin": 0.0,
+  "trade_count": 16,
+  "total_pnl": -160286.14791484643,
   "profit_reserve": 0.0,
-  "deployed_capital": 2350552.997379336,
+  "deployed_capital": 0.0,
   "halted": false,
-  "entry_ts": 1790178352,
+  "entry_ts": 0,
   "last_routine_notify_ts": 1790176472.5325987,
   "loss_cooldown": {
     "manta": 1789957777.0706787,
@@ -27,6 +27,7 @@
     "trollsol": 1790034024.24482,
     "fartcoin": 1790200717.4491422,
     "mubarak": 1790202678.865113,
-    "conx": 1790225151.0917401
+    "conx": 1790225151.0917401,
+    "lighter": 1790226749.51391
   }
 }

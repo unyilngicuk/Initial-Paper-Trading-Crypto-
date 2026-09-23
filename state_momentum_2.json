@@ -2,16 +2,16 @@
   "slot_id": 2,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "uni",
-  "entry_price": 186000.0,
-  "peak_price": 188750.0,
-  "qty_coin": 11.053222159266207,
-  "trade_count": 26,
-  "total_pnl": -443872.4482182376,
+  "coin": "mubarak",
+  "entry_price": 1213.321,
+  "peak_price": 1213.321,
+  "qty_coin": 1690.3548798959034,
+  "trade_count": 27,
+  "total_pnl": -448829.2468162193,
   "profit_reserve": 0.0,
-  "deployed_capital": 2056127.5517817624,
+  "deployed_capital": 2051170.7531837807,
   "halted": false,
-  "entry_ts": 1790140037,
+  "entry_ts": 1790143021,
   "last_routine_notify_ts": 1790141734.7917278,
   "loss_cooldown": {
     "zama": 1790056537.071144,
@@ -35,6 +35,7 @@
     "conx": 1790174619.5876842,
     "hbar": 1790180100.4175825,
     "arb": 1790183497.1908648,
-    "chr": 1790186835.2874448
+    "chr": 1790186835.2874448,
+    "uni": 1790189820.2193224
   }
 }

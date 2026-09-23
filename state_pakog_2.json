@@ -2,16 +2,16 @@
   "slot_id": 2,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "wealth",
-  "entry_price": 565000.0,
-  "peak_price": 565000.0,
-  "qty_coin": 3.2605768831639503,
-  "trade_count": 10,
-  "total_pnl": -657569.5512325547,
+  "coin": "ub",
+  "entry_price": 2782.0,
+  "peak_price": 2782.0,
+  "qty_coin": 599.2188879656375,
+  "trade_count": 11,
+  "total_pnl": -832787.9931468361,
   "profit_reserve": 0.0,
-  "deployed_capital": 1842430.4487674453,
+  "deployed_capital": 1667212.006853164,
   "halted": false,
-  "entry_ts": 1790180380,
+  "entry_ts": 1790181862,
   "last_routine_notify_ts": 1790178066.0282435,
   "loss_cooldown": {
     "ada": 1790101951.859004,
@@ -23,10 +23,11 @@
     "beat": 1790219517.7861867,
     "ace": 1790220293.8153486,
     "move": 1790222197.2095864,
-    "lighter": 1790227179.895861
+    "lighter": 1790227179.895861,
+    "wealth": 1790228661.3026266
   },
   "breakeven_active": false,
   "trail_active": false,
   "phase": "risk",
-  "scans_since_entry": 1
+  "scans_since_entry": 0
 }

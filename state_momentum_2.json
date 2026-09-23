@@ -2,16 +2,16 @@
   "slot_id": 2,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "mubarak",
-  "entry_price": 1213.321,
-  "peak_price": 1381.61,
-  "qty_coin": 1690.3548798959034,
-  "trade_count": 27,
-  "total_pnl": -448829.2468162193,
+  "coin": "uai",
+  "entry_price": 7124.0,
+  "peak_price": 7124.0,
+  "qty_coin": 296.9954496087699,
+  "trade_count": 28,
+  "total_pnl": -383969.5376057979,
   "profit_reserve": 0.0,
-  "deployed_capital": 2051170.7531837807,
+  "deployed_capital": 2116030.462394202,
   "halted": false,
-  "entry_ts": 1790143021,
+  "entry_ts": 1790149040,
   "last_routine_notify_ts": 1790145487.8308856,
   "loss_cooldown": {
     "zama": 1790056537.071144,
@@ -36,6 +36,7 @@
     "hbar": 1790180100.4175825,
     "arb": 1790183497.1908648,
     "chr": 1790186835.2874448,
-    "uni": 1790189820.2193224
+    "uni": 1790189820.2193224,
+    "mubarak": 1790195838.9790456
   }
 }

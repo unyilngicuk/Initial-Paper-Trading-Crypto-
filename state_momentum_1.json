@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "mubarak",
   "entry_price": 1147.724,
-  "peak_price": 1147.724,
+  "peak_price": 1160.106,
   "qty_coin": 2253.720231517643,
   "trade_count": 12,
   "total_pnl": 86935.94888868136,
@@ -12,7 +12,7 @@
   "deployed_capital": 2586935.9488886814,
   "halted": false,
   "entry_ts": 1790153920,
-  "last_routine_notify_ts": 1790150379.0156708,
+  "last_routine_notify_ts": 1790154958.4471624,
   "loss_cooldown": {
     "manta": 1789957777.0706787,
     "avax": 1789958509.4752862,

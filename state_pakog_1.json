@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "col",
   "entry_price": 1510.0,
-  "peak_price": 1510.0,
+  "peak_price": 1539.0,
   "qty_coin": 1313.4101073391696,
   "trade_count": 13,
   "total_pnl": -516530.57281143614,
@@ -31,5 +31,5 @@
   "breakeven_active": false,
   "trail_active": false,
   "phase": "risk",
-  "scans_since_entry": 16
+  "scans_since_entry": 17
 }

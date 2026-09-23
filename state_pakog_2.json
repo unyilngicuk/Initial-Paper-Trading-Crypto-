@@ -2,16 +2,16 @@
   "slot_id": 2,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "honey",
-  "entry_price": 26.0,
-  "peak_price": 29.0,
-  "qty_coin": 60639.11827926406,
-  "trade_count": 13,
-  "total_pnl": -923207.9008161251,
+  "coin": "neon",
+  "entry_price": 859.0,
+  "peak_price": 859.0,
+  "qty_coin": 1760.5626555954498,
+  "trade_count": 14,
+  "total_pnl": -987508.7923194561,
   "profit_reserve": 0.0,
-  "deployed_capital": 1576792.099183875,
+  "deployed_capital": 1512491.207680544,
   "halted": false,
-  "entry_ts": 1790185194,
+  "entry_ts": 1790186898,
   "last_routine_notify_ts": 1790186272.5594199,
   "loss_cooldown": {
     "ada": 1790101951.859004,
@@ -26,10 +26,11 @@
     "lighter": 1790227179.895861,
     "wealth": 1790228661.3026266,
     "ub": 1790230855.560234,
-    "bnkr": 1790231993.5428345
+    "bnkr": 1790231993.5428345,
+    "honey": 1790233697.834813
   },
-  "breakeven_active": true,
-  "trail_active": true,
-  "phase": "trend_riding",
-  "scans_since_entry": 3
+  "breakeven_active": false,
+  "trail_active": false,
+  "phase": "risk",
+  "scans_since_entry": 0
 }

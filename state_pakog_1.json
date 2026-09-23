@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "ace",
   "entry_price": 3526.0,
-  "peak_price": 3526.0,
+  "peak_price": 3792.0,
   "qty_coin": 573.7779854801441,
   "trade_count": 10,
   "total_pnl": -476634.2295964968,
@@ -12,7 +12,7 @@
   "deployed_capital": 2023365.7704035032,
   "halted": false,
   "entry_ts": 1790173494,
-  "last_routine_notify_ts": 1790169962.4491436,
+  "last_routine_notify_ts": 1790174142.7435923,
   "loss_cooldown": {
     "sui": 1790089212.3210826,
     "fet": 1790104948.1118612,
@@ -25,8 +25,8 @@
     "grt": 1790219516.3640935,
     "lighter": 1790220292.3672395
   },
-  "breakeven_active": false,
+  "breakeven_active": true,
   "trail_active": false,
-  "phase": "risk",
-  "scans_since_entry": 0
+  "phase": "proven",
+  "scans_since_entry": 1
 }

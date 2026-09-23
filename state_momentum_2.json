@@ -2,16 +2,16 @@
   "slot_id": 2,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "coti",
-  "entry_price": 301.0,
-  "peak_price": 303.0,
-  "qty_coin": 6316.941118777617,
-  "trade_count": 31,
-  "total_pnl": -598389.6444984768,
+  "coin": "aevo",
+  "entry_price": 478.0,
+  "peak_price": 478.0,
+  "qty_coin": 3889.1322447789057,
+  "trade_count": 32,
+  "total_pnl": -640788.4145096936,
   "profit_reserve": 0.0,
-  "deployed_capital": 1901610.3555015232,
+  "deployed_capital": 1859211.5854903064,
   "halted": false,
-  "entry_ts": 1790156747,
+  "entry_ts": 1790159283,
   "last_routine_notify_ts": 1790154959.916717,
   "loss_cooldown": {
     "zama": 1790056537.071144,
@@ -39,6 +39,7 @@
     "uni": 1790189820.2193224,
     "mubarak": 1790195838.9790456,
     "uai": 1790200718.9201994,
-    "inj": 1790203544.7533886
+    "inj": 1790203544.7533886,
+    "coti": 1790206079.7425802
   }
 }

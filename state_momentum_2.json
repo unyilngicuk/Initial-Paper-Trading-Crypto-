@@ -2,16 +2,16 @@
   "slot_id": 2,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "conx",
-  "entry_price": 416265.0,
-  "peak_price": 417956.0,
-  "qty_coin": 5.070347719789334,
-  "trade_count": 22,
-  "total_pnl": -389157.4028936145,
+  "coin": "hbar",
+  "entry_price": 1787.0,
+  "peak_price": 1787.0,
+  "qty_coin": 1179.4742249228611,
+  "trade_count": 23,
+  "total_pnl": -392045.57712190785,
   "profit_reserve": 0.0,
-  "deployed_capital": 2110842.5971063855,
+  "deployed_capital": 2107954.422878092,
   "halted": false,
-  "entry_ts": 1790104704,
+  "entry_ts": 1790127821,
   "last_routine_notify_ts": 1790124646.7911031,
   "loss_cooldown": {
     "zama": 1790056537.071144,
@@ -31,6 +31,7 @@
     "fet": 1790093548.0719852,
     "syn": 1790126725.0160458,
     "wif": 1790146893.6828647,
-    "aioz": 1790151501.8501847
+    "aioz": 1790151501.8501847,
+    "conx": 1790174619.5876842
   }
 }

@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "uai",
   "entry_price": 7170.0,
-  "peak_price": 7170.0,
+  "peak_price": 7226.0,
   "qty_coin": 362.8684218906869,
   "trade_count": 3,
   "total_pnl": 102055.41310707992,
@@ -21,5 +21,5 @@
   "breakeven_active": false,
   "trail_active": false,
   "phase": "risk",
-  "scans_since_entry": 1
+  "scans_since_entry": 2
 }

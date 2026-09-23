@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "uai",
   "entry_price": 7071.0,
-  "peak_price": 7071.0,
+  "peak_price": 7177.0,
   "qty_coin": 314.25765689200966,
   "trade_count": 7,
   "total_pnl": -277637.42587087164,
@@ -12,7 +12,7 @@
   "deployed_capital": 2222362.5741291284,
   "halted": false,
   "entry_ts": 1790145145,
-  "last_routine_notify_ts": 1790141988.1612864,
+  "last_routine_notify_ts": 1790146060.4253883,
   "loss_cooldown": {
     "sui": 1790089212.3210826,
     "fet": 1790104948.1118612,
@@ -25,5 +25,5 @@
   "breakeven_active": false,
   "trail_active": false,
   "phase": "risk",
-  "scans_since_entry": 0
+  "scans_since_entry": 1
 }

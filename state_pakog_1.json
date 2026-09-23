@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "useless",
   "entry_price": 5996.0,
-  "peak_price": 6197.0,
+  "peak_price": 6234.0,
   "qty_coin": 376.2644917988956,
   "trade_count": 6,
   "total_pnl": -243667.6542834472,
@@ -24,5 +24,5 @@
   "breakeven_active": false,
   "trail_active": false,
   "phase": "proven",
-  "scans_since_entry": 18
+  "scans_since_entry": 19
 }

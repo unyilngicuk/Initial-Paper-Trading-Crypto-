@@ -2,16 +2,16 @@
   "slot_id": 2,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "aevo",
-  "entry_price": 478.0,
-  "peak_price": 489.0,
-  "qty_coin": 3889.1322447789057,
-  "trade_count": 32,
-  "total_pnl": -640788.4145096936,
+  "coin": "glidr",
+  "entry_price": 1397.997,
+  "peak_price": 1397.997,
+  "qty_coin": 1301.58063084635,
+  "trade_count": 33,
+  "total_pnl": -680192.1841511361,
   "profit_reserve": 0.0,
-  "deployed_capital": 1859211.5854903064,
+  "deployed_capital": 1819807.815848864,
   "halted": false,
-  "entry_ts": 1790159283,
+  "entry_ts": 1790162647,
   "last_routine_notify_ts": 1790160171.0976324,
   "loss_cooldown": {
     "zama": 1790056537.071144,
@@ -40,6 +40,7 @@
     "mubarak": 1790195838.9790456,
     "uai": 1790200718.9201994,
     "inj": 1790203544.7533886,
-    "coti": 1790206079.7425802
+    "coti": 1790206079.7425802,
+    "aevo": 1790209445.529914
   }
 }

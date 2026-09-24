@@ -2,16 +2,16 @@
   "slot_id": 1,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "humanity",
-  "entry_price": 1150.0,
-  "peak_price": 1170.0,
-  "qty_coin": 1567.3098288451197,
-  "trade_count": 25,
-  "total_pnl": -697393.6075185467,
+  "coin": "ondo",
+  "entry_price": 8900.0,
+  "peak_price": 8900.0,
+  "qty_coin": 200.62392249094538,
+  "trade_count": 26,
+  "total_pnl": -714248.8714553178,
   "profit_reserve": 0.0,
-  "deployed_capital": 1802606.3924814533,
+  "deployed_capital": 1785751.1285446822,
   "halted": false,
-  "entry_ts": 1790254879,
+  "entry_ts": 1790261465,
   "last_routine_notify_ts": 1790256967.8999193,
   "loss_cooldown": {
     "manta": 1789957777.0706787,
@@ -36,6 +36,7 @@
     "glidr": 1790263195.7076094,
     "col": 1790288586.0840912,
     "lsk": 1790291906.1160493,
-    "cvc": 1790301007.7930813
+    "cvc": 1790301007.7930813,
+    "humanity": 1790308264.141418
   }
 }

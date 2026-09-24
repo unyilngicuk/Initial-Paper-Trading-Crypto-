@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "ltc",
   "entry_price": 1143000.0,
-  "peak_price": 1217000.0,
+  "peak_price": 1219000.0,
   "qty_coin": 1.5795435615289086,
   "trade_count": 20,
   "total_pnl": -694381.2854951476,
@@ -12,7 +12,7 @@
   "deployed_capital": 1805618.7145048524,
   "halted": false,
   "entry_ts": 1790217878,
-  "last_routine_notify_ts": 1790222293.9579523,
+  "last_routine_notify_ts": 1790225901.2705007,
   "loss_cooldown": {
     "sui": 1790089212.3210826,
     "fet": 1790104948.1118612,
@@ -37,5 +37,5 @@
   "breakeven_active": true,
   "trail_active": false,
   "phase": "proven",
-  "scans_since_entry": 13
+  "scans_since_entry": 14
 }

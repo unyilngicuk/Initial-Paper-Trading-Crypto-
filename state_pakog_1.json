@@ -2,16 +2,16 @@
   "slot_id": 1,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "galagames",
-  "entry_price": 45.0,
-  "peak_price": 50.0,
-  "qty_coin": 41240.44601800195,
-  "trade_count": 17,
-  "total_pnl": -643973.9102939549,
+  "coin": "syn",
+  "entry_price": 3966.0,
+  "peak_price": 3966.0,
+  "qty_coin": 456.43094719588765,
+  "trade_count": 18,
+  "total_pnl": -689593.9083449359,
   "profit_reserve": 0.0,
-  "deployed_capital": 1856026.089706045,
+  "deployed_capital": 1810406.0916550641,
   "halted": false,
-  "entry_ts": 1790215213,
+  "entry_ts": 1790216584,
   "last_routine_notify_ts": 1790214410.6956267,
   "loss_cooldown": {
     "sui": 1790089212.3210826,
@@ -29,10 +29,11 @@
     "bnkr": 1790224178.5414727,
     "col": 1790259468.3577287,
     "nom": 1790260088.4586766,
-    "neon": 1790262012.9593596
+    "neon": 1790262012.9593596,
+    "galagames": 1790263383.5905745
   },
-  "breakeven_active": true,
-  "trail_active": true,
-  "phase": "trend_riding",
-  "scans_since_entry": 1
+  "breakeven_active": false,
+  "trail_active": false,
+  "phase": "risk",
+  "scans_since_entry": 0
 }

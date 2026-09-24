@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "ltc",
   "entry_price": 1143000.0,
-  "peak_price": 1205000.0,
+  "peak_price": 1214000.0,
   "qty_coin": 1.5795435615289086,
   "trade_count": 20,
   "total_pnl": -694381.2854951476,
@@ -37,5 +37,5 @@
   "breakeven_active": true,
   "trail_active": false,
   "phase": "proven",
-  "scans_since_entry": 10
+  "scans_since_entry": 11
 }

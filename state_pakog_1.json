@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "galagames",
   "entry_price": 45.0,
-  "peak_price": 45.0,
+  "peak_price": 50.0,
   "qty_coin": 41240.44601800195,
   "trade_count": 17,
   "total_pnl": -643973.9102939549,
@@ -31,8 +31,8 @@
     "nom": 1790260088.4586766,
     "neon": 1790262012.9593596
   },
-  "breakeven_active": false,
-  "trail_active": false,
-  "phase": "risk",
-  "scans_since_entry": 0
+  "breakeven_active": true,
+  "trail_active": true,
+  "phase": "trend_riding",
+  "scans_since_entry": 1
 }

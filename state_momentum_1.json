@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "neon",
   "entry_price": 974.0,
-  "peak_price": 974.0,
+  "peak_price": 1025.0,
   "qty_coin": 1832.8706982990243,
   "trade_count": 21,
   "total_pnl": -714585.7588759856,
@@ -12,7 +12,7 @@
   "deployed_capital": 1785414.2411240144,
   "halted": false,
   "entry_ts": 1790222193,
-  "last_routine_notify_ts": 1790216396.2802486,
+  "last_routine_notify_ts": 1790223102.7488525,
   "loss_cooldown": {
     "manta": 1789957777.0706787,
     "avax": 1789958509.4752862,

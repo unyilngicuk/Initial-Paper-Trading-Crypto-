@@ -1,18 +1,18 @@
 {
   "slot_id": 1,
   "initial_capital": 2500000,
-  "balance": 0.0,
-  "coin": "glidr",
-  "entry_price": 1428.993,
-  "peak_price": 1428.993,
-  "qty_coin": 1334.3748866550955,
-  "trade_count": 20,
-  "total_pnl": -592975.947924295,
+  "balance": 1785414.2411240144,
+  "coin": null,
+  "entry_price": 0.0,
+  "peak_price": 0.0,
+  "qty_coin": 0.0,
+  "trade_count": 21,
+  "total_pnl": -714585.7588759856,
   "profit_reserve": 0.0,
-  "deployed_capital": 1907024.052075705,
+  "deployed_capital": 0.0,
   "halted": false,
-  "entry_ts": 1790215345,
-  "last_routine_notify_ts": 1790211379.7936833,
+  "entry_ts": 0,
+  "last_routine_notify_ts": 1790216396.2802486,
   "loss_cooldown": {
     "manta": 1789957777.0706787,
     "avax": 1789958509.4752862,
@@ -32,6 +32,7 @@
     "allo": 1790228723.0254312,
     "wealth": 1790232631.1829758,
     "met": 1790249455.111978,
-    "superverse": 1790257345.5868075
+    "superverse": 1790257345.5868075,
+    "glidr": 1790263195.7076094
   }
 }

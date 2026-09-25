@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "fet",
   "entry_price": 4080.0,
-  "peak_price": 4296.0,
+  "peak_price": 4300.0,
   "qty_coin": 491.2587724632664,
   "trade_count": 21,
   "total_pnl": -495441.70237883716,
@@ -12,7 +12,7 @@
   "deployed_capital": 2004558.2976211628,
   "halted": false,
   "entry_ts": 1790312407,
-  "last_routine_notify_ts": 1790333145.4641793,
+  "last_routine_notify_ts": 1790337221.628365,
   "loss_cooldown": {
     "sui": 1790089212.3210826,
     "fet": 1790104948.1118612,
@@ -38,5 +38,5 @@
   "breakeven_active": true,
   "trail_active": false,
   "phase": "proven",
-  "scans_since_entry": 38
+  "scans_since_entry": 39
 }

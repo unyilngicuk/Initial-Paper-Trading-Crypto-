@@ -2,16 +2,16 @@
   "slot_id": 1,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "ondo",
-  "entry_price": 8900.0,
-  "peak_price": 10250.0,
-  "qty_coin": 200.62392249094538,
-  "trade_count": 26,
-  "total_pnl": -714248.8714553178,
+  "coin": "mubarak",
+  "entry_price": 952.992,
+  "peak_price": 952.992,
+  "qty_coin": 1990.9188683911889,
+  "trade_count": 27,
+  "total_pnl": -602459.6187918303,
   "profit_reserve": 0.0,
-  "deployed_capital": 1785751.1285446822,
+  "deployed_capital": 1897540.3812081697,
   "halted": false,
-  "entry_ts": 1790261465,
+  "entry_ts": 1790351839,
   "last_routine_notify_ts": 1790348469.2541885,
   "loss_cooldown": {
     "manta": 1789957777.0706787,
@@ -37,6 +37,7 @@
     "col": 1790288586.0840912,
     "lsk": 1790291906.1160493,
     "cvc": 1790301007.7930813,
-    "humanity": 1790308264.141418
+    "humanity": 1790308264.141418,
+    "ondo": 1790398638.3674874
   }
 }

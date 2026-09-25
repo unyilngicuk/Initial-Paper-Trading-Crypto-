@@ -2,16 +2,16 @@
   "slot_id": 1,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "xpl",
-  "entry_price": 2018.0,
-  "peak_price": 2031.0,
-  "qty_coin": 927.0345593005436,
-  "trade_count": 29,
-  "total_pnl": -629036.5823921484,
+  "coin": "sui",
+  "entry_price": 20281.0,
+  "peak_price": 20281.0,
+  "qty_coin": 92.20181574105251,
+  "trade_count": 30,
+  "total_pnl": -629847.3880157839,
   "profit_reserve": 0.0,
-  "deployed_capital": 1870963.4176078516,
+  "deployed_capital": 1870152.6119842161,
   "halted": false,
-  "entry_ts": 1790357362,
+  "entry_ts": 1790362660,
   "last_routine_notify_ts": 1790361931.8948748,
   "loss_cooldown": {
     "manta": 1789957777.0706787,
@@ -38,6 +38,7 @@
     "lsk": 1790291906.1160493,
     "cvc": 1790301007.7930813,
     "humanity": 1790308264.141418,
-    "ondo": 1790398638.3674874
+    "ondo": 1790398638.3674874,
+    "xpl": 1790409458.2956445
   }
 }

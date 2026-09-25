@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "sui",
   "entry_price": 20281.0,
-  "peak_price": 21220.0,
+  "peak_price": 21414.0,
   "qty_coin": 92.20181574105251,
   "trade_count": 30,
   "total_pnl": -629847.3880157839,
@@ -12,7 +12,7 @@
   "deployed_capital": 1870152.6119842161,
   "halted": false,
   "entry_ts": 1790362660,
-  "last_routine_notify_ts": 1790373849.0981832,
+  "last_routine_notify_ts": 1790377846.8561003,
   "loss_cooldown": {
     "manta": 1789957777.0706787,
     "avax": 1789958509.4752862,

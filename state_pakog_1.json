@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "wld",
   "entry_price": 9557.0,
-  "peak_price": 9557.0,
+  "peak_price": 9650.0,
   "qty_coin": 196.35707756317183,
   "trade_count": 26,
   "total_pnl": -623207.0857152813,
@@ -41,5 +41,5 @@
   "breakeven_active": false,
   "trail_active": false,
   "phase": "risk",
-  "scans_since_entry": 0
+  "scans_since_entry": 1
 }

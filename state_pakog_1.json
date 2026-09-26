@@ -2,16 +2,16 @@
   "slot_id": 1,
   "initial_capital": 2500000,
   "balance": 0.0,
-  "coin": "jellyjelly",
-  "entry_price": 1195.868,
-  "peak_price": 1195.868,
-  "qty_coin": 1651.220269478938,
-  "trade_count": 24,
-  "total_pnl": -525139.3092420874,
+  "coin": "beat",
+  "entry_price": 1865.0,
+  "peak_price": 1865.0,
+  "qty_coin": 1015.7232662579218,
+  "trade_count": 25,
+  "total_pnl": -605465.8151344559,
   "profit_reserve": 0.0,
-  "deployed_capital": 1974860.6907579126,
+  "deployed_capital": 1894534.184865544,
   "halted": false,
-  "entry_ts": 1790426932,
+  "entry_ts": 1790429156,
   "last_routine_notify_ts": 1790427409.5066187,
   "loss_cooldown": {
     "sui": 1790473731.3461578,
@@ -34,10 +34,11 @@
     "syn": 1790263995.3553386,
     "myx": 1790264677.657439,
     "ltc": 1790359206.7187738,
-    "ena": 1790432174.1834798
+    "ena": 1790432174.1834798,
+    "jellyjelly": 1790475955.751452
   },
   "breakeven_active": false,
   "trail_active": false,
   "phase": "risk",
-  "scans_since_entry": 3
+  "scans_since_entry": 0
 }

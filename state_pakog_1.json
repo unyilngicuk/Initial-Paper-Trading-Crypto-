@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "beat",
   "entry_price": 1865.0,
-  "peak_price": 1969.0,
+  "peak_price": 1970.0,
   "qty_coin": 1015.7232662579218,
   "trade_count": 25,
   "total_pnl": -605465.8151344559,
@@ -40,5 +40,5 @@
   "breakeven_active": true,
   "trail_active": false,
   "phase": "proven",
-  "scans_since_entry": 8
+  "scans_since_entry": 9
 }

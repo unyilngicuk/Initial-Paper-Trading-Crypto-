@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "ena",
   "entry_price": 4468.0,
-  "peak_price": 4770.0,
+  "peak_price": 4825.0,
   "qty_coin": 463.74997129915107,
   "trade_count": 22,
   "total_pnl": -427735.1068322514,
@@ -38,5 +38,5 @@
   "breakeven_active": true,
   "trail_active": false,
   "phase": "proven",
-  "scans_since_entry": 60
+  "scans_since_entry": 61
 }

@@ -4,7 +4,7 @@
   "balance": 0.0,
   "coin": "beat",
   "entry_price": 1865.0,
-  "peak_price": 1879.0,
+  "peak_price": 1949.0,
   "qty_coin": 1015.7232662579218,
   "trade_count": 25,
   "total_pnl": -605465.8151344559,
@@ -37,8 +37,8 @@
     "ena": 1790432174.1834798,
     "jellyjelly": 1790475955.751452
   },
-  "breakeven_active": false,
+  "breakeven_active": true,
   "trail_active": false,
-  "phase": "risk",
-  "scans_since_entry": 6
+  "phase": "proven",
+  "scans_since_entry": 7
 }
